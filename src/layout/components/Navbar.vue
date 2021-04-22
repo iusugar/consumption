@@ -1,0 +1,110 @@
+<!-- 顶栏 -->
+<template>
+  <div class="bg-nav">
+    <el-row :gutter="20">
+      <el-col :span="19">
+        <el-row class="search-bar"
+                type="flex"
+                justify="center"
+                align="middle">
+          <el-col :span="10"
+                  :offset="14">
+            <el-input placeholder="请输入查询内容"
+                      size="mini"
+                      v-model="content"
+                      class="input-with-select">
+              <el-select v-model="select"
+                         slot="prepend"
+                         :popper-append-to-body="false">
+                <el-option label="插座"
+                           value="1"></el-option>
+                <el-option label="用户"
+                           value="2"></el-option>
+              </el-select>
+              <el-button slot="append"
+                         icon="el-icon-search"></el-button>
+            </el-input>
+          </el-col>
+        </el-row>
+      </el-col>
+      <el-col :span="4">
+        <div class="right-container">
+          <el-row type="flex"
+                  justify="end"
+                  align="middle"
+                  :gutter="20">
+            <el-col :span="7">
+              <badge />
+            </el-col>
+            <el-col :span="7">
+              <add-new />
+            </el-col>
+            <el-col :span="7">
+              <user-avatar />
+            </el-col>
+          </el-row>
+        </div>
+      </el-col>
+    </el-row>
+  </div>
+</template>
+
+<script>
+import AddNew from './navbar-choice/AddNew'
+import Badge from './navbar-choice/Badge'
+import UserAvatar from './navbar-choice/UserAvatar'
+export default {
+  components: { Badge, UserAvatar, AddNew },
+  data() {
+    return {
+      content: '',
+      select: '1'
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.bg-nav {
+  background-color: #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 20, 40, 0.13);
+  width: 100%;
+  height: 45px;
+  .search-bar {
+    height: 45px;
+    .input-with-select {
+      width: 70%;
+      /deep/ .el-input__inner {
+        padding: 0 0 0 10px;
+      }
+      /deep/ .el-select {
+        width: 60px;
+         .el-select-dropdown {
+          margin: 5px 0 0 0;
+          .el-select-dropdown__item {
+            height: 30px;
+            font-size: 6px;
+            padding: 0;
+            text-align: center;
+          }
+        }
+      }
+      /deep/ .el-input-group__append {
+        padding: 5px;
+      }
+    }
+  }
+  .right-container {
+    height: 45px;
+    width: 200px;
+    text-align: center;
+    box-sizing: border-box;
+    padding: 7px 0 5px 0;
+    .el-row {
+      .el-col {
+        line-height: 32px;
+      }
+    }
+  }
+}
+</style>
