@@ -11,7 +11,7 @@
     "build": "node build/build.js"
   },
   "dependencies": {
-    "echarts": "^5.0.2",
+    "echarts": "^5.1.0",
     "element-resize-detector": "^1.2.2",
     "element-ui": "^2.14.1",
     "node-sass": "^4.14.1",

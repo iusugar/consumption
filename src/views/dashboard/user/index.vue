@@ -4,13 +4,22 @@
     <el-row>
       <panel-group/>
     </el-row>
+    <el-row :gutter="20">
+      <el-col :xs="24" :sm="24" :lg="8">
+        <div class="chart-wrapper">
+          <pie-chart />
+        </div>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script>
 import PanelGroup from './components/PanelGroup.vue'
+import PieChart from './components/pieChart.vue'
+
 export default {
-  components: { PanelGroup },
+  components: { PanelGroup, PieChart },
   data() {
     return {
     }

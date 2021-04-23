@@ -81,10 +81,10 @@
 </template>
 
 <script>
-import DailyBarChart from './chart/DailyBarChart'
-import MonthlyBarChart from './chart/MonthlyBarChart'
-import RecentlyBarChart from './chart/RecentlyBarChart.vue'
-import WeeklyBarChart from './chart/WeeklyBarChart'
+import DailyBarChart from './cardChart/DailyBarChart'
+import MonthlyBarChart from './cardChart/MonthlyBarChart'
+import RecentlyBarChart from './cardChart/RecentlyBarChart.vue'
+import WeeklyBarChart from './cardChart/WeeklyBarChart'
 
 export default {
   components: { MonthlyBarChart, DailyBarChart, WeeklyBarChart, RecentlyBarChart },
@@ -145,6 +145,9 @@ export default {
           }
         }
         &.recently {
+          .recently-bar {
+            height: 100%;
+          }
         }
       }
     }

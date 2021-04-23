@@ -3,16 +3,15 @@ import resizeDetector from 'element-resize-detector'
 export default {
   mounted() {
     window.addEventListener('resize', () => {
-      this.chart.resize()
+      // this.chart.resize()
     })
-    // this.watchSize()
+    this.chartResize()
   },
   methods: {
-    watchSize() {
-      var erd = resizeDetector()
-      const _this = this
-      erd.listenTo(document.getElementsByClassName('chart'), function (element) {
-        _this.chart.resize()
+    chartResize() {
+      let erd = resizeDetector()
+      erd.listenTo(this.$el, () => {
+        this.chart.resize()
       })
     }
   }
