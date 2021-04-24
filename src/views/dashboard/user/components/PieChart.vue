@@ -57,23 +57,27 @@ export default {
         },
         series: [
           {
-            name: '面积模式',
+            name: '一年用电统计',
             type: 'pie',
-            radius: [50, 250],
-            center: ['50%', '50%'],
+            radius: [30, 70],
+            center: ['50%', '45%'],
             roseType: 'area',
             itemStyle: {
               borderRadius: 8
             },
             data: [
-              { value: 40, name: 'rose 1' },
-              { value: 38, name: 'rose 2' },
-              { value: 32, name: 'rose 3' },
-              { value: 30, name: 'rose 4' },
-              { value: 28, name: 'rose 5' },
-              { value: 26, name: 'rose 6' },
-              { value: 22, name: 'rose 7' },
-              { value: 18, name: 'rose 8' }
+              { value: 601, name: 'Jan' },
+              { value: 538, name: 'Feb' },
+              { value: 332, name: 'Mar' },
+              { value: 430, name: 'Apr' },
+              { value: 728, name: 'May' },
+              { value: 926, name: 'Jun' },
+              { value: 1022, name: 'Jul' },
+              { value: 818, name: 'Aug' },
+              { value: 618, name: 'Sep' },
+              { value: 577, name: 'Oct' },
+              { value: 582, name: 'Nov' },
+              { value: 509, name: 'Dec' }
             ]
           }
         ]

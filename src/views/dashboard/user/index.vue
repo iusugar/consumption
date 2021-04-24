@@ -16,7 +16,7 @@
 
 <script>
 import PanelGroup from './components/PanelGroup.vue'
-import PieChart from './components/pieChart.vue'
+import PieChart from './components/pieChart'
 
 export default {
   components: { PanelGroup, PieChart },
@@ -28,5 +28,9 @@ export default {
 </script>
 
 <style scoped>
-
+  .chart-wrapper {
+    background: #fff;
+    padding: 16px 16px 0;
+    margin-bottom: 32px;
+  }
 </style>

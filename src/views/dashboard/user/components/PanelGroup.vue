@@ -2,9 +2,8 @@
 <template>
   <div class="panel-container">
     <el-row class="panel-group"
-            type="flex"
-            justify="space-around">
-      <el-col :span="5"
+             :gutter="40">
+      <el-col :xs="24" :sm="12" :lg="6"
               class="panel-col">
         <div class="monthly panel-card">
           <el-container>
@@ -22,7 +21,7 @@
         </div>
       </el-col>
 
-      <el-col :span="5"
+      <el-col :xs="24" :sm="12" :lg="6"
               class="panel-col">
         <div class="daily panel-card">
           <el-container>
@@ -40,7 +39,7 @@
         </div>
       </el-col>
 
-      <el-col :span="5"
+      <el-col :xs="24" :sm="12" :lg="6"
               class="panel-col">
         <div class="weekly panel-card">
           <el-container>
@@ -58,7 +57,7 @@
         </div>
       </el-col>
 
-      <el-col :span="5"
+      <el-col :xs="24" :sm="12" :lg="6"
               class="panel-col">
         <div class="recently panel-card">
           <el-container>
@@ -104,6 +103,7 @@ export default {
 .panel-container {
   .panel-group {
     .panel-col {
+      margin-bottom: 30px;
       & > div {
         height: 120px;
         border-radius: 5px;
