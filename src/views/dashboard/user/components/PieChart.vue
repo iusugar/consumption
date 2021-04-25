@@ -6,8 +6,10 @@
 
 <script>
 import * as echarts from 'echarts'
+import resize from './mixins/resize'
 
 export default {
+  mixins: [resize],
   props: {
     className: {
       type: String,
@@ -19,7 +21,7 @@ export default {
     },
     height: {
       type: String,
-      default: '300px'
+      default: '350px'
     }
   },
   data() {
@@ -44,26 +46,61 @@ export default {
       this.chart = echarts.init(this.$el)
       this.chart.setOption({
         legend: {
-          top: 'bottom'
+          bottom: '10'
         },
-        toolbox: {
-          show: true,
-          feature: {
-            mark: { show: true },
-            dataView: { show: true, readOnly: false },
-            restore: { show: true },
-            saveAsImage: { show: true }
-          }
-        },
+        // toolbox: {
+        //   show: true,
+        //   feature: {
+        //     mark: { show: true },
+        //     dataView: { show: true, readOnly: false },
+        //     restore: { show: true },
+        //     saveAsImage: { show: true }
+        //   }
+        // },
         series: [
           {
             name: '一年用电统计',
             type: 'pie',
-            radius: [30, 70],
-            center: ['50%', '45%'],
+            radius: ['15%', '60%'],
+            center: ['50%', '40%'],
             roseType: 'area',
             itemStyle: {
-              borderRadius: 8
+              borderRadius: 2
+            },
+            labelLine: {
+              // length: 30
+            },
+            label: {
+              formatter: ' {b|{b}：}{c}  {per|{d}%}  ',
+              backgroundColor: '#F6F8FC',
+              borderColor: '#8C8D8E',
+              borderWidth: 1,
+              borderRadius: 1,
+              rich: {
+                a: {
+                  color: '#6E7079',
+                  lineHeight: 15,
+                  align: 'center'
+                },
+                hr: {
+                  borderColor: '#8C8D8E',
+                  width: '100%',
+                  borderWidth: 1,
+                  height: 0
+                },
+                b: {
+                  color: '#4C5058',
+                  fontSize: 14,
+                  fontWeight: 'bold',
+                  lineHeight: 33
+                },
+                per: {
+                  color: '#fff',
+                  backgroundColor: '#4C5058',
+                  padding: [3, 4],
+                  borderRadius: 4
+                }
+              }
             },
             data: [
               { value: 601, name: 'Jan' },

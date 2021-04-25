@@ -5,7 +5,7 @@
       <panel-group/>
     </el-row>
     <el-row :gutter="20">
-      <el-col :xs="24" :sm="24" :lg="8">
+      <el-col :xs="24" :sm="24" :lg="12">
         <div class="chart-wrapper">
           <pie-chart />
         </div>

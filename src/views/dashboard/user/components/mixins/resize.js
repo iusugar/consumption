@@ -1,4 +1,5 @@
 import resizeDetector from 'element-resize-detector'
+import {debounce} from '@/utils/debounce.js'
 
 export default {
   mounted() {
@@ -10,9 +11,10 @@ export default {
   methods: {
     chartResize() {
       let erd = resizeDetector()
-      erd.listenTo(this.$el, () => {
+      erd.listenTo(this.$el, debounce(() => {
         this.chart.resize()
-      })
+        console.log('resize')
+      }, 100))
     }
   }
 }
