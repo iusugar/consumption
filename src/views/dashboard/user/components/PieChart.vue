@@ -45,6 +45,10 @@ export default {
     initChart() {
       this.chart = echarts.init(this.$el)
       this.chart.setOption({
+        tooltip: {
+          trigger: 'item',
+          formatter: '{a} <br/>{b}: {c} ({d}%)'
+        },
         legend: {
           bottom: '10'
         },
@@ -71,7 +75,7 @@ export default {
               // length: 30
             },
             label: {
-              formatter: ' {b|{b}：}{c}  {per|{d}%}  ',
+              formatter: ' {b|{b}:}{c} {per|{d}%}  ',
               backgroundColor: '#F6F8FC',
               borderColor: '#8C8D8E',
               borderWidth: 1,
@@ -82,17 +86,11 @@ export default {
                   lineHeight: 15,
                   align: 'center'
                 },
-                hr: {
-                  borderColor: '#8C8D8E',
-                  width: '100%',
-                  borderWidth: 1,
-                  height: 0
-                },
                 b: {
                   color: '#4C5058',
-                  fontSize: 14,
+                  fontSize: 12,
                   fontWeight: 'bold',
-                  lineHeight: 33
+                  lineHeight: 30
                 },
                 per: {
                   color: '#fff',
