@@ -4,9 +4,9 @@ import {debounce} from '@/utils/debounce.js'
 export default {
   mounted() {
     window.addEventListener('resize', () => {
-      // this.chart.resize()
+      this.chart.resize()
     })
-    this.chartResize()
+    // this.chartResize()
   },
   methods: {
     chartResize() {

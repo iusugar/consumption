@@ -75,7 +75,7 @@ export default {
               // length: 30
             },
             label: {
-              formatter: ' {b|{b}:}{c} {per|{d}%}  ',
+              formatter: ' {b|{b}:}{c} {per|{d}%} ',
               backgroundColor: '#F6F8FC',
               borderColor: '#8C8D8E',
               borderWidth: 1,
@@ -113,7 +113,9 @@ export default {
               { value: 577, name: 'Oct' },
               { value: 582, name: 'Nov' },
               { value: 509, name: 'Dec' }
-            ]
+            ],
+            animationEasing: 'cubicInOut',
+            animationDuration: 2600
           }
         ]
       })
