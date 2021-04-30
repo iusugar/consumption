@@ -6,8 +6,10 @@
 
 <script>
 import * as echarts from 'echarts'
+import resize from './mixins/resize'
 
 export default {
+  mixins: [resize],
   props: {
     className: {
       type: String,
@@ -116,7 +118,9 @@ export default {
               }, {
                 xAxis: '21:15'
               }]]
-            }
+            },
+            animationEasing: 'cubicInOut',
+            animationDuration: 2500
           }
         ]
       })

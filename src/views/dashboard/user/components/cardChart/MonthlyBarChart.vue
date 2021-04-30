@@ -149,7 +149,9 @@ export default {
             itemStyle: {
               borderRadius: [0, 10, 10, 0],
               color: '#91cc75'
-            }
+            },
+            animationEasing: 'cubicInOut',
+            animationDuration: 2000
           },
           {
             name: '上月',
@@ -159,7 +161,9 @@ export default {
             itemStyle: {
               borderRadius: [0, 10, 10, 0],
               color: '#0066cc'
-            }
+            },
+            animationEasing: 'cubicInOut',
+            animationDuration: 2000
           }
         ]
       })

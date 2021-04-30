@@ -140,7 +140,9 @@ export default {
             itemStyle: {
               borderRadius: [0, 10, 10, 0],
               color: '#ff9900'
-            }
+            },
+            animationEasing: 'cubicInOut',
+            animationDuration: 2000
           },
           {
             name: '同期',
@@ -150,7 +152,9 @@ export default {
             itemStyle: {
               borderRadius: [0, 10, 10, 0],
               color: '#0066cc'
-            }
+            },
+            animationEasing: 'cubicInOut',
+            animationDuration: 2000
           }
         ]
       })

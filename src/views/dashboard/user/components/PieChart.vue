@@ -115,7 +115,7 @@ export default {
               { value: 509, name: 'Dec' }
             ],
             animationEasing: 'cubicInOut',
-            animationDuration: 2600
+            animationDuration: 2500
           }
         ]
       })

@@ -162,7 +162,9 @@ export default {
             ],
             type: 'bar',
             barWidth: '50%',
-            showBackground: true
+            showBackground: true,
+            animationEasing: 'cubicInOut',
+            animationDuration: 2000
           }
         ]
       })

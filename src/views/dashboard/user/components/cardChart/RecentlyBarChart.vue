@@ -163,7 +163,9 @@ export default {
             },
             tooltip: {
               extraCssText: 'background-color: "#000";'
-            }
+            },
+            animationEasing: 'cubicInOut',
+            animationDuration: 2000
           }
         ]
       })

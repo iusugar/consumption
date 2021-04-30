@@ -6,7 +6,9 @@ export default {
     window.addEventListener('resize', () => {
       this.chart.resize()
     })
-    // this.chartResize()
+    this.$nextTick(() => {
+      setTimeout(() => { this.chartResize() }, 5000)
+    })
   },
   methods: {
     chartResize() {
