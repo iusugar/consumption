@@ -33,7 +33,7 @@ export default {
   }
   .el-icon-bell {
     color: #999999;
-    font-size: 25px;
+    font-size: 20px;
     &:hover {
       color: #336699;
     }

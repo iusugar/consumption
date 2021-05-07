@@ -1,7 +1,7 @@
 <!-- 顶栏 -->
 <template>
   <div class="bg-nav">
-    <el-row :gutter="20">
+    <el-row >
       <el-col :span="19">
         <el-row class="search-bar"
                 type="flex"
@@ -66,10 +66,9 @@ export default {
 
 <style lang="scss" scoped>
 .bg-nav {
-  background-color: #ffffff;
-  box-shadow: 0 1px 4px rgba(0, 20, 40, 0.13);
   width: 100%;
   height: 45px;
+  border: none;
   .search-bar {
     height: 45px;
     .input-with-select {
@@ -103,6 +102,7 @@ export default {
     .el-row {
       .el-col {
         line-height: 32px;
+        padding: 0;
       }
     }
   }

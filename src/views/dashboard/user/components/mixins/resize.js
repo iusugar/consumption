@@ -7,7 +7,7 @@ export default {
       this.chart.resize()
     })
     this.$nextTick(() => {
-      setTimeout(() => { this.chartResize() }, 5000)
+      setTimeout(() => { this.chartResize() }, 3000)
     })
   },
   methods: {

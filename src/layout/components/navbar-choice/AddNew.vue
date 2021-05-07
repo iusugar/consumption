@@ -26,7 +26,7 @@ export default {
 .el-dropdown {
   i {
     color: #999999;
-    font-size: 25px;
+    font-size: 20px;
     &:hover {
       color: #336699;
     }

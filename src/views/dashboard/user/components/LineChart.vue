@@ -46,7 +46,7 @@ export default {
       this.chart = echarts.init(this.$el)
       this.chart.setOption({
         title: {
-          text: '昨日用电量分布'
+          text: '昨日用电功率分布'
         },
         tooltip: {
           trigger: 'axis',

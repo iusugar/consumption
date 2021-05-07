@@ -43,5 +43,7 @@ export default {
   background: #fff;
   padding: 16px 16px 0;
   margin-bottom: 32px;
+  border-radius: 5px;
+  box-shadow: 1px 1px 15px #ddd;
 }
 </style>

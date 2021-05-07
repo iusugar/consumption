@@ -5,10 +5,10 @@
       <sidebar />
       <el-container>
         <el-header>
-          <navbar/>
+          <navbar />
         </el-header>
         <el-main>
-          <app-main/>
+          <app-main />
         </el-main>
       </el-container>
     </el-container>
@@ -38,10 +38,14 @@ export default {
 
   .el-container {
     height: 100%;
-
+    background-color: #ff000000;
     .el-header {
-      height: 45px!important;
+      background-color: #fdfdfd;
+      height: 45px !important;
       padding: 0;
+      // margin-bottom: 10px;
+      z-index: 10;
+      box-shadow: 1px 1px 4px rgba($color: #000000, $alpha: 0.25);
     }
 
     .el-main {
