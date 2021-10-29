@@ -38,14 +38,14 @@ export default {
 
   .el-container {
     height: 100%;
-    background-color: #ff000000;
+    // background-color: #ff000000;
     .el-header {
       background-color: #fdfdfd;
       height: 45px !important;
       padding: 0;
       // margin-bottom: 10px;
       z-index: 10;
-      box-shadow: 1px 1px 4px rgba($color: #000000, $alpha: 0.25);
+      box-shadow: 1px 1px 5px #00000015;
     }
 
     .el-main {

@@ -46,7 +46,11 @@ export default {
       this.chart = echarts.init(this.$el)
       this.chart.setOption({
         title: {
-          text: '昨日用电功率分布'
+          text: '昨日用电功率',
+          textStyle: {
+            color: '#3B5998',
+            fontSize: 14
+          }
         },
         tooltip: {
           trigger: 'axis',
@@ -54,21 +58,21 @@ export default {
             type: 'cross'
           }
         },
-        toolbox: {
-          show: true,
-          feature: {
-            saveAsImage: {}
-          }
-        },
+        // toolbox: {
+        //   show: true,
+        //   feature: {
+        //     saveAsImage: {}
+        //   }
+        // },
         xAxis: {
           type: 'category',
           boundaryGap: false,
-          data: ['00:00', '01:15', '02:30', '03:45', '05:00', '06:15', '07:30', '08:45', '10:00', '11:15', '12:30', '13:45', '15:00', '16:15', '17:30', '18:45', '20:00', '21:15', '22:30', '23:45']
+          data: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00']
         },
         yAxis: {
           type: 'value',
           axisLabel: {
-            formatter: '{value} W'
+            formatter: '{value} kW'
           },
           axisPointer: {
             snap: true
@@ -78,14 +82,14 @@ export default {
           show: false,
           dimension: 0,
           pieces: [{
-            lte: 6,
+            lte: 5,
             color: 'green'
           }, {
-            gt: 6,
-            lte: 8,
+            gt: 5,
+            lte: 7,
             color: 'red'
           }, {
-            gt: 8,
+            gt: 7,
             lte: 14,
             color: 'green'
           }, {
@@ -99,24 +103,24 @@ export default {
         },
         series: [
           {
-            name: '用电量',
+            name: '用电功率',
             type: 'line',
             smooth: true,
-            data: [300, 280, 250, 260, 270, 300, 550, 500, 400, 390, 380, 390, 400, 500, 600, 750, 800, 700, 600, 400],
+            data: [300, 280, 250, 260, 270, 300, 550, 500, 400, 390, 380, 390, 400, 500, 600, 750, 800, 700, 600, 400, 390, 480, 678, 560],
             markArea: {
               itemStyle: {
                 color: 'rgba(255, 173, 177, 0.4)'
               },
               data: [[{
                 name: '早高峰',
-                xAxis: '07:30'
+                xAxis: '05:00'
               }, {
-                xAxis: '10:00'
+                xAxis: '07:00'
               }], [{
                 name: '晚高峰',
-                xAxis: '17:30'
+                xAxis: '14:00'
               }, {
-                xAxis: '21:15'
+                xAxis: '17:00'
               }]]
             },
             animationEasing: 'cubicInOut',

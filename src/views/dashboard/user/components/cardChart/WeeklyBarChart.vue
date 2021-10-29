@@ -76,7 +76,7 @@ export default {
         },
         xAxis: {
           type: 'category',
-          data: ['插座1', '插座2', '插座3', '插座4', '插座5', '插座6', '插座7', '插座8', '插座9'],
+          data: ['插座1', '插座2', '插座3', '插座4', '插座5', '插座6', '插座7', '插座8'],
           // boundaryGap: false,
           axisLine: {
             show: false
@@ -149,12 +149,6 @@ export default {
               },
               {
                 value: 549,
-                itemStyle: {
-                  color: '#5470c6'
-                }
-              },
-              {
-                value: 456,
                 itemStyle: {
                   color: '#5470c6'
                 }

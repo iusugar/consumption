@@ -68,24 +68,24 @@ export default {
         },
         grid: {
           left: 15,
-          width: '70%',
+          width: '80%',
           containLabel: true
         },
-        toolbox: {
-          show: true,
-          orient: 'vertical',
-          itemSize: 12,
-          itemGap: 5,
-          showTitle: false,
-          right: '5%',
-          feature: {
-            magicType: { show: true, type: ['line', 'bar'] },
-            saveAsImage: { show: true }
-          },
-          iconStyle: {
-            borderColor: '#ff9900'
-          }
-        },
+        // toolbox: {
+        //   show: true,
+        //   orient: 'vertical',
+        //   itemSize: 12,
+        //   itemGap: 5,
+        //   showTitle: false,
+        //   right: '5%',
+        //   // feature: {
+        //   //   magicType: { show: true, type: ['line', 'bar'] },
+        //   //   saveAsImage: { show: true }
+        //   // },
+        //   iconStyle: {
+        //     borderColor: '#ff9900'
+        //   }
+        // },
         // calculable: true,
         xAxis: [
           {
@@ -131,6 +131,8 @@ export default {
             type: 'bar',
             color: '#ff9900',
             barWidth: '50%',
+            barGap: '5%',
+            barCategoryGap: '5%',
             showBackground: true,
             data: [26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8],
             // markPoint: {

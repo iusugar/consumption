@@ -3,9 +3,10 @@ import {debounce} from '@/utils/debounce.js'
 
 export default {
   mounted() {
-    window.addEventListener('resize', () => {
-      this.chart.resize()
-    })
+    // window.addEventListener('resize', () => {
+    //   this.chart.resize()
+    //   console.log('windowResize');
+    // })
     this.$nextTick(() => {
       setTimeout(() => { this.chartResize() }, 3000)
     })

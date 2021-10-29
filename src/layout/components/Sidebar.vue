@@ -1,31 +1,46 @@
 <!-- sidebar -->
 <template>
   <div>
-    <el-menu default-active="1"
-             background-color="#003366"
+    <el-menu :default-active="currentRoute"
+             background-color="#293E6A"
              text-color="#f1f1f1"
-             class="el-menu-vertical-demo"
-             @open="handleOpen"
-             @close="handleClose"
-             :collapse="isCollapse">
+             class="el-menu-vertical-demo hidden-sm-and-down"
+             :collapse="isCollapse"
+             :router="true">
+      <!-- <el-radio-group v-model="isCollapse" @click="collapse">
+        <el-radio-button :label="!isCollapse"><i :class="isFold"></i></el-radio-button>
+      </el-radio-group> -->
       <el-button type="primary"
                  size="medium"
                  @click="collapse">
         <i :class="isFold"></i>
       </el-button>
-      <el-menu-item index="1">
+      <el-menu-item index="/dashboard"
+                    class="first-menu-item">
         <i class="el-icon-menu"></i>
         <span slot="title">Dashboard</span>
       </el-menu-item>
-      <el-menu-item index="2">
+      <el-menu-item index="/analysis/index">
         <i class="el-icon-data-analysis"></i>
         <span slot="title">Analysis</span>
       </el-menu-item>
-      <el-menu-item index="3">
+      <el-submenu index="1">
+        <template slot="title">
+          <i class="el-icon-s-management"></i>
+          <span slot="title">插座管理</span>
+        </template>
+        <el-menu-item index="/management/add-new">添加智能插座</el-menu-item>
+        <el-menu-item index="/management/list">查看插座列表</el-menu-item>
+      </el-submenu>
+      <!-- <el-menu-item index="/management/index">
         <i class="el-icon-s-management"></i>
         <span slot="title">Management</span>
+      </el-menu-item> -->
+      <el-menu-item index="/location/index">
+        <i class="el-icon-location"></i>
+        <span slot="title">空间分布</span>
       </el-menu-item>
-      <el-menu-item index="4">
+      <el-menu-item index="/user/index">
         <i class="el-icon-user-solid"></i>
         <span slot="title">User</span>
       </el-menu-item>
@@ -38,17 +53,13 @@ export default {
   name: 'Sidebar',
   data() {
     return {
+      currentRoute: this.$route.path,
       isCollapse: false,
       isFold: 'el-icon-s-fold'
     };
   },
   methods: {
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath);
-    },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath);
-    },
+
     collapse() {
       this.isCollapse = !this.isCollapse;
       if (this.isCollapse) {
@@ -70,20 +81,33 @@ export default {
   height: 100%;
 }
 .el-menu {
-  .el-button {
-    width: 30px;
-    height: 30px;
+  .first-menu-item {
+    margin-top: 20px;
+  }
+  /deep/ .is-active {
+    background-color: rgba($color: #000000, $alpha: 0.2) !important;
+  }
+  .el-button,
+  .el-radio-group {
+    width: 45px;
+    height: 45px;
     padding: 0;
     position: relative;
     float: right;
     z-index: 10;
     background-color: transparent;
     border-radius: 0 0 0 30px;
-    background-color: brown;
+    background-color: rgb(255, 90, 9);
     border: none;
     i {
       margin: 0 0 5px 5px;
-      font-size: 18px;
+      font-size: 25px;
+      color: rgba(255, 255, 255, 1);
+    }
+    /deep/ .el-radio-button__inner {
+      padding: 0;
+      background-color: rgba($color: #000000, $alpha: 0);
+      border: none;
     }
   }
 }

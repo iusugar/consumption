@@ -7,7 +7,7 @@
       </span>
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item>添加插座</el-dropdown-item>
-        <el-dropdown-item>添加用户</el-dropdown-item>
+        <el-dropdown-item divided>添加用户</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
   </div>

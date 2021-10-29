@@ -1,4 +1,4 @@
-<!-- 统计本月各个插座用电的占比 -->
+<!-- 统计年度各个插座用电的占比 -->
 <template>
   <div :class="className"
        :style="{width:width,height:height}"></div>
@@ -26,7 +26,8 @@ export default {
   },
   data() {
     return {
-      chart: null
+      chart: null,
+      consumption: [6661, 7258, 8876, 4563, 4245, 8742, 5921, 4791, 12331, 8823, 7836, 8822]
     }
   },
   mounted() {
@@ -45,9 +46,16 @@ export default {
     initChart() {
       this.chart = echarts.init(this.$el)
       this.chart.setOption({
+        // title: {
+        //   text: '一年用电占比',
+        //   textStyle: {
+        //     color: '#3B5998',
+        //     fontSize: 14
+        //   }
+        // },
         tooltip: {
           trigger: 'item',
-          formatter: '{a} <br/>{b}: {c} ({d}%)'
+          formatter: '{a} <br/>{b}: {c} kWh ({d}%)'
         },
         legend: {
           bottom: '10'
@@ -63,7 +71,7 @@ export default {
         // },
         series: [
           {
-            name: '一年用电统计',
+            name: '用电统计',
             type: 'pie',
             radius: ['15%', '60%'],
             center: ['50%', '40%'],
@@ -101,18 +109,18 @@ export default {
               }
             },
             data: [
-              { value: 601, name: 'Jan' },
-              { value: 538, name: 'Feb' },
-              { value: 332, name: 'Mar' },
-              { value: 430, name: 'Apr' },
-              { value: 728, name: 'May' },
-              { value: 926, name: 'Jun' },
-              { value: 1022, name: 'Jul' },
-              { value: 818, name: 'Aug' },
-              { value: 618, name: 'Sep' },
-              { value: 577, name: 'Oct' },
-              { value: 582, name: 'Nov' },
-              { value: 509, name: 'Dec' }
+              { value: this.consumption[0], name: 'Jan' },
+              { value: this.consumption[1], name: 'Feb' },
+              { value: this.consumption[2], name: 'Mar' },
+              { value: this.consumption[3], name: 'Apr' },
+              { value: this.consumption[4], name: 'May' },
+              { value: this.consumption[5], name: 'Jun' },
+              { value: this.consumption[6], name: 'Jul' },
+              { value: this.consumption[7], name: 'Aug' },
+              { value: this.consumption[8], name: 'Sep' },
+              { value: this.consumption[9], name: 'Oct' },
+              { value: this.consumption[10], name: 'Nov' },
+              { value: this.consumption[11], name: 'Dec' }
             ],
             animationEasing: 'cubicInOut',
             animationDuration: 2500

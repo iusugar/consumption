@@ -1,0 +1,30 @@
+{
+  "id": "2880124",
+  "name": "energy-consumption",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "12331651",
+      "name": "电流",
+      "font_class": "dianliu",
+      "unicode": "e665",
+      "unicode_decimal": 58981
+    },
+    {
+      "icon_id": "12331657",
+      "name": "电压",
+      "font_class": "dianya",
+      "unicode": "e666",
+      "unicode_decimal": 58982
+    },
+    {
+      "icon_id": "12331669",
+      "name": "功率",
+      "font_class": "gongshuai",
+      "unicode": "e668",
+      "unicode_decimal": 58984
+    }
+  ]
+}
