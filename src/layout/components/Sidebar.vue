@@ -1,6 +1,6 @@
 <!-- sidebar -->
 <template>
-  <div>
+  <div class="sidebar">
     <el-menu :default-active="currentRoute"
              background-color="#293E6A"
              text-color="#f1f1f1"
@@ -18,7 +18,7 @@
       <el-menu-item index="/dashboard"
                     class="first-menu-item">
         <i class="el-icon-menu"></i>
-        <span slot="title">Dashboard</span>
+        <span slot="title">综合数据</span>
       </el-menu-item>
       <el-menu-item index="/analysis/index">
         <i class="el-icon-data-analysis"></i>
@@ -73,6 +73,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.sidebar {
+  user-select: none;
+}
 .el-menu-vertical-demo:not(.el-menu--collapse) {
   width: 200px;
   height: 100%;
@@ -108,6 +111,14 @@ export default {
       padding: 0;
       background-color: rgba($color: #000000, $alpha: 0);
       border: none;
+    }
+  }
+}
+/deep/ .el-menu {
+  li:not(.is-active) {
+    color: rgb(191, 203, 217) !important;
+    span {
+      color: rgb(191, 203, 217);
     }
   }
 }

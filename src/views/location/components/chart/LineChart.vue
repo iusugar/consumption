@@ -46,7 +46,11 @@ export default {
           }
         },
         legend: {
-          data: ['电流', '电压', '功率']
+          data: ['电流', '电压', '功率'],
+          backgroundColor: '#fff',
+          borderRadius: 5,
+          padding: 15,
+          itemGap: 20
         },
         grid: {
           left: '5%',

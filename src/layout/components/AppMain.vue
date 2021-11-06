@@ -3,9 +3,9 @@
   <section class="app-main">
     <transition name="fade-transform"
                 mode="out-in">
-      <!-- <keep-alive :include="cachedViews"> -->
+      <keep-alive >
         <router-view :key="key" />
-      <!-- </keep-alive> -->
+      </keep-alive>
     </transition>
   </section>
 </template>
@@ -15,11 +15,16 @@ export default {
   name: 'AppMain',
   data() {
     return {
-      key: this.$route.path
     }
   },
-  mounted () {
-    console.log('app-main组件 --->' + this.key)
+  computed: {
+    key() {
+      console.log(this.$route.path);
+      return this.$route.path
+    }
+  },
+  mounted() {
+    // console.log('app-main组件 --->' + this.key)
   }
 }
 </script>

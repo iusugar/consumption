@@ -1,6 +1,6 @@
 <!-- 用户界面 -->
 <template>
-  <div>
+  <div class="dashboard-container">
     <el-row>
       <panel-group />
     </el-row>
@@ -67,6 +67,9 @@ export default {
 </script>
 
 <style scoped>
+.dashboard-container {
+  padding: 20px;
+}
 .chart-wrapper {
   background: #fff;
   padding: 16px 16px 0;

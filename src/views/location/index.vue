@@ -5,9 +5,7 @@
     <central-panel />
     <sidebar />
     <drawer />
-    <!-- <div class="control-panel"> -->
       <control />
-    <!-- </div> -->
   </div>
 </template>
 
@@ -31,6 +29,6 @@ export default {
 
 <style lang="scss" scoped>
 .app-container {
-  padding: 0 0 50px 0;
+  padding: 20px 20px 70px 20px;
 }
 </style>

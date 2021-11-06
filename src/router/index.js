@@ -28,8 +28,8 @@ export default new Router({
         {
           path: 'add-new',
           component: () => import('@/views/management/addNew'),
-          name: 'Management'
-          // meta: { title: 'Management', icon: 'management', affix: true }
+          name: 'Management',
+          meta: { title: 'Management', icon: 'management', affix: true }
         },
         {
           path: 'list',
@@ -46,8 +46,8 @@ export default new Router({
         {
           path: 'index',
           component: () => import('@/views/analysis/index'),
-          name: 'Analysis'
-          // meta: { title: 'Management', icon: 'management', affix: true }
+          name: 'Analysis',
+          meta: { title: 'Management', icon: 'management', affix: true }
         }
       ]
     },

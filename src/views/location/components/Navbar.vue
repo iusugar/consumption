@@ -53,10 +53,9 @@ export default {
 
 <style lang="scss" scoped>
 .nav-wrapper {
-  width: 33.3%;
-  top: 10%;
+  width: 40%;
   // min-width: 300px;
-  position: fixed;
+  position: relative;
   margin-left: 80px;
   box-shadow: 0 2px 5px #00000015;
   opacity: 0.7;
@@ -68,12 +67,23 @@ export default {
   .el-tabs {
     /deep/ .el-tabs__header {
       margin: 0;
+      .el-tabs__nav-wrap {
+        .el-tabs__nav-prev {
+          background-color: #ffffff99;
+        }
+        .el-tabs__nav-next {
+          background-color: #ffffff99;
+        }
+        .el-tabs__nav {
+          border: none;
+        }
+      }
     }
     /deep/ .el-tabs__content {
       display: none;
     }
     /deep/ .el-tabs__item {
-      background-color: #e9eef3;
+      background-color: #ffffff99;
       margin: 0;
       font-size: 13px;
       color: #a7a7a7;

@@ -80,7 +80,7 @@ export default {
 .equipment-container {
   padding: 10px 20px 10px 20px;
   margin: 0 50px 0 80px;
-  background-color: #ffffff;
+  background-color: #ffffff99;
   border-radius: 10px;
   box-shadow: 0 2px 5px #00000015;
   .equipment {
@@ -103,6 +103,8 @@ export default {
     }
     .name {
       color: #cacaca;
+      font-size: 12px;
+      line-height: 30px;
     }
   }
   .is-on {

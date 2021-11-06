@@ -198,6 +198,7 @@ export default {
 
 <style lang="scss" scoped>
 .app-container {
+  padding: 20px;
   .box-card {
     width: 700px;
     // max-width: 100%;

@@ -35,7 +35,6 @@ export default {
   position: relative;
   height: 100%;
   width: 100%;
-
   .el-container {
     height: 100%;
     // background-color: #ff000000;
@@ -52,6 +51,7 @@ export default {
       background-color: #e9eef3;
       color: #333;
       text-align: center;
+      padding: 0;
     }
   }
 }
