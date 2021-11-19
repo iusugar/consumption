@@ -11,6 +11,7 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "axios": "^0.24.0",
     "echarts": "^5.2.2",
     "element-resize-detector": "^1.2.2",
     "element-ui": "^2.14.1",

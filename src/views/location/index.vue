@@ -29,6 +29,8 @@ export default {
 
 <style lang="scss" scoped>
 .app-container {
+  text-align: center;
   padding: 20px 20px 70px 20px;
+  background-color: #FFFFFF;
 }
 </style>

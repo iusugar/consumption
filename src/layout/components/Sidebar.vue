@@ -1,50 +1,60 @@
 <!-- sidebar -->
 <template>
   <div class="sidebar">
-    <el-menu :default-active="currentRoute"
-             background-color="#293E6A"
-             text-color="#f1f1f1"
-             class="el-menu-vertical-demo hidden-sm-and-down"
-             :collapse="isCollapse"
-             :router="true">
-      <!-- <el-radio-group v-model="isCollapse" @click="collapse">
+    <el-scrollbar wrap-class="scrollbar-wrapper">
+      <el-menu :default-active="currentRoute"
+               background-color="#293E6A"
+               text-color="#f1f1f1"
+               class="el-menu-vertical hidden-sm-and-down"
+               :collapse="isCollapse"
+               :router="true">
+        <!-- <el-radio-group v-model="isCollapse" @click="collapse">
         <el-radio-button :label="!isCollapse"><i :class="isFold"></i></el-radio-button>
       </el-radio-group> -->
-      <el-button type="primary"
-                 size="medium"
-                 @click="collapse">
-        <i :class="isFold"></i>
-      </el-button>
-      <el-menu-item index="/dashboard"
-                    class="first-menu-item">
-        <i class="el-icon-menu"></i>
-        <span slot="title">综合数据</span>
-      </el-menu-item>
-      <el-menu-item index="/analysis/index">
-        <i class="el-icon-data-analysis"></i>
-        <span slot="title">Analysis</span>
-      </el-menu-item>
-      <el-submenu index="1">
-        <template slot="title">
-          <i class="el-icon-s-management"></i>
-          <span slot="title">插座管理</span>
-        </template>
-        <el-menu-item index="/management/add-new">添加智能插座</el-menu-item>
-        <el-menu-item index="/management/list">查看插座列表</el-menu-item>
-      </el-submenu>
-      <!-- <el-menu-item index="/management/index">
+        <el-button type="primary"
+                   size="medium"
+                   @click="collapse">
+          <i :class="isFold"></i>
+        </el-button>
+        <el-menu-item index="/dashboard"
+                      class="first-menu-item">
+          <i class="el-icon-menu"></i>
+          <span slot="title">综合数据</span>
+        </el-menu-item>
+        <el-menu-item index="/analysis/index">
+          <i class="el-icon-data-analysis"></i>
+          <span slot="title">Analysis</span>
+        </el-menu-item>
+        <el-submenu index="1">
+          <template slot="title">
+            <i class="el-icon-s-management"></i>
+            <span slot="title">插座管理</span>
+          </template>
+          <el-menu-item index="/management/add-new">添加智能插座</el-menu-item>
+          <el-menu-item index="/management/list">查看插座列表</el-menu-item>
+        </el-submenu>
+        <!-- <el-menu-item index="/management/index">
         <i class="el-icon-s-management"></i>
         <span slot="title">Management</span>
       </el-menu-item> -->
-      <el-menu-item index="/location/index">
-        <i class="el-icon-location"></i>
-        <span slot="title">空间分布</span>
-      </el-menu-item>
-      <el-menu-item index="/user/index">
-        <i class="el-icon-user-solid"></i>
-        <span slot="title">User</span>
-      </el-menu-item>
-    </el-menu>
+        <el-menu-item index="/location/index">
+          <i class="el-icon-location"></i>
+          <span slot="title">插座分布</span>
+        </el-menu-item>
+        <el-menu-item index="/room/index">
+          <i class="el-icon-office-building"></i>
+          <span slot="title">空间管理</span>
+        </el-menu-item>
+        <el-menu-item index="/gateway/index">
+          <i class="el-icon-box"></i>
+          <span slot="title">网关配置</span>
+        </el-menu-item>
+        <el-menu-item index="/user/index">
+          <i class="el-icon-user-solid"></i>
+          <span slot="title">User</span>
+        </el-menu-item>
+      </el-menu>
+    </el-scrollbar>
   </div>
 </template>
 
@@ -75,9 +85,18 @@ export default {
 <style lang="scss" scoped>
 .sidebar {
   user-select: none;
+  // width: 200px;
+  background-color: #293e6a;
+  .el-scrollbar {
+    height: 100% !important;
+    /deep/ .el-scrollbar__wrap {
+      overflow-x: hidden;
+    }
+  }
 }
-.el-menu-vertical-demo:not(.el-menu--collapse) {
-  width: 200px;
+
+.el-menu-vertical:not(.el-menu--collapse) {
+  width: 201px;
   height: 100%;
 }
 .el-menu--collapse {

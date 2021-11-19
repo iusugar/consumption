@@ -7,7 +7,9 @@
            class="clearfix header">
         <i class="el-icon-edit">添加新的插座</i>
         <el-button style="float: right; padding: 3px 0"
-                   type="text">查看所有插座</el-button>
+                   type="text">
+          <router-link to="/management/list">查看所有插座</router-link>
+        </el-button>
       </div>
       <div class="form-wrapper">
         <el-form :model="ruleForm"
@@ -16,28 +18,29 @@
                  label-width="100px">
           <el-row type="flex">
             <el-col :span="11">
-              <el-form-item label="插座型号"
-                            prop="type">
-                <el-input placeholder="请输入插座型号"
-                          v-model="ruleForm.type"><i slot="prefix"
+              <el-form-item label="插座ID号"
+                            prop="deviceId">
+                <el-input placeholder="请输入插座ID"
+                          v-model="ruleForm.deviceId"><i slot="prefix"
                      class="iconfont icon-4qichexinghao"></i></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="11">
               <el-form-item label="插座用途"
-                            prop="used">
+                            prop="usageDesc">
                 <el-input placeholder="请输入用途"
-                          v-model="ruleForm.used"><i slot="prefix"
+                          v-model="ruleForm.usageDesc"><i slot="prefix"
                      class="iconfont icon-xuqiu-hui"></i></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row type="flex">
-            <el-col :span="11">
+            <el-col :span="7">
               <el-form-item label="所在楼号"
-                            prop="buildingNumber">
-                <el-select v-model="ruleForm.buildingNumber"
-                           placeholder="请选择楼号">
+                            prop="buildNum">
+                <el-select v-model="ruleForm.buildNum"
+                           placeholder="楼号"
+                           @change="buildingChange($event)">
                   <el-option v-for="(option, index) in buildingOption"
                              :key="index"
                              :label="option.label"
@@ -45,43 +48,56 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="11">
+            <el-col :span="7">
               <el-form-item label="门牌号码"
-                            prop="roomNumber">
-                <el-select v-model="ruleForm.roomNumber"
-                           placeholder="请选择门牌号">
+                            prop="roomNum">
+                <el-select v-model="ruleForm.roomNum"
+                           placeholder="门牌号">
                   <el-option v-for="(option, index) in roomOption"
                              :key="index"
                              :label="option.label"
                              :value="option.value"></el-option>
-
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="7">
+              <el-form-item label="具体位置"
+                            prop="location">
+                <el-select v-model="ruleForm.location"
+                           placeholder="具体位置">
+                  <el-option v-for="(option, index) in locationOption"
+                             :key="index"
+                             :label="option.label"
+                             :value="option.value"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row type="flex">
-            <el-col :span="8">
+            <el-col :span="7">
               <el-form-item label="额定电压"
-                            prop="voltage">
+                            prop="ratedVoltage">
                 <el-input placeholder="请输入电压"
                           :value="220"
-                          v-model="ruleForm.voltage"><i slot="prefix"
-                     class="iconfont icon-dianya"></i></el-input>
+                          v-model="ruleForm.ratedVoltage">
+                  <i slot="prefix"
+                     class="iconfont icon-dianya"></i>
+                </el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="7">
               <el-form-item label="额定电流"
-                            prop="electricCurrent">
+                            prop="ratedCurrent">
                 <el-input placeholder="请输入电流"
-                          v-model="ruleForm.electricCurrent"><i slot="prefix"
+                          v-model="ruleForm.ratedCurrent"><i slot="prefix"
                      class="iconfont icon-dianliu"></i></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="7">
               <el-form-item label="最大功率"
-                            prop="power">
+                            prop="retedPower">
                 <el-input placeholder="请输入功率"
-                          v-model="ruleForm.power"><i slot="prefix"
+                          v-model="ruleForm.retedPower"><i slot="prefix"
                      class="iconfont icon-gongshuai"></i></el-input>
               </el-form-item>
             </el-col>
@@ -91,11 +107,12 @@
                           prop="checkedFunctions">
               <el-checkbox :indeterminate="ruleForm.isIndeterminate"
                            v-model="ruleForm.checkAll"
-                           @change="handleCheckAllChange" class="all-checked-box">全选</el-checkbox>
+                           @change="handleCheckAllChange"
+                           class="all-checked-box">全选</el-checkbox>
 
               <el-checkbox-group v-model="ruleForm.checkedFunctions"
                                  @change="handleCheckedCitiesChange">
-                <el-checkbox v-for="item in ruleForm.socketFunctions"
+                <el-checkbox v-for="item in ruleForm.deviceFunctions"
                              :label="item"
                              :key="item">{{item}}</el-checkbox>
               </el-checkbox-group>
@@ -118,79 +135,116 @@
 </template>
 
 <script>
+import { addDevice } from '@/api/device.js'
+import { selectAllRoom } from '@/api/room.js'
+
 export default {
   data() {
     return {
       ruleForm: {
-        type: '',
-        used: '',
-        buildingNumber: '',
-        roomNumber: '',
-        voltage: '220',
-        electricCurrent: '',
-        power: '',
-        socketFunctions: ['监测电流', '监测电压', '监测功率', '远程控制', '记录电量', '红外功能'],
+        deviceId: '',
+        usageDesc: '',
+        buildNum: '',
+        roomNum: '',
+        location: '',
+        ratedVoltage: '220',
+        ratedCurrent: '',
+        retedPower: '',
+        deviceFunctions: ['监测电流', '监测电压', '监测功率', '远程控制', '记录电量', '红外功能'],
         checkAll: false,
         checkedFunctions: ['监测功率', '记录电量'],
         isIndeterminate: true
       },
       rules: {
-        // type: [
-        //   { required: true, message: '请输入活动名称', trigger: 'blur' },
-        //   { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+        // deviceId: [
+        //   { required: true, message: '请输入设备id编号', trigger: 'blur' },
+        //   { min: 24, max: 24, message: '长度为24个字符', trigger: 'blur' }
         // ],
-        // region: [
-        //   { required: true, message: '请选择活动区域', trigger: 'change' }
+        // buildNum: [
+        //   { required: true, message: '请选择楼号', trigger: 'change' }
         // ],
-        // resource: [
-        //   { required: true, message: '请选择活动资源', trigger: 'change' }
+        // roomNum: [
+        //   { required: true, message: '请选择门牌号', trigger: 'change' }
         // ],
-        // desc: [
-        //   { required: true, message: '请填写活动形式', trigger: 'blur' }
+        // location: [
+        //   { required: true, message: '请填写具体位置', trigger: 'change' }
         // ]
       },
-      buildingOption: [{
-        'label': 'A1', 'value': 'A1'
-      }, {
-        'label': 'A2', 'value': 'A2'
-      }, {
-        'label': 'A3', 'value': 'A4'
+      buildingOption: [],
+      roomOption: [],
+      locationOption: [{
+        'label': '1号桌', value: '1号桌'
       }],
-      roomOption: [{
-        'label': '101', 'value': '101'
-      }, {
-        'label': '102', 'value': '102'
-      }, {
-        'label': '103', 'value': '103'
-      }, {
-        'label': '104', 'value': '104'
-      }, {
-        'label': '105', 'value': '105'
-      }]
+      roomData: []
     };
+  },
+  mounted() {
+    this.getAllRoom();
   },
   methods: {
     handleCheckAllChange(val) {
-      this.ruleForm.checkedFunctions = val ? this.ruleForm.socketFunctions : [];
+      this.ruleForm.checkedFunctions = val ? this.ruleForm.deviceFunctions : [];
       this.ruleForm.isIndeterminate = false;
     },
     handleCheckedCitiesChange(value) {
       let checkedCount = value.length;
-      this.ruleForm.checkAll = checkedCount === this.ruleForm.socketFunctions.length;
-      this.ruleForm.isIndeterminate = checkedCount > 0 && checkedCount < this.ruleForm.socketFunctions.length;
+      this.ruleForm.checkAll = checkedCount === this.ruleForm.deviceFunctions.length;
+      this.ruleForm.isIndeterminate = checkedCount > 0 && checkedCount < this.ruleForm.deviceFunctions.length;
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!');
+          console.log(this.ruleForm);
+          addDevice(this.ruleForm)
+            .then(response => {
+              console.log(response);
+              console.log('发送成功');
+            })
+            .catch(error => {
+              console.log('发生了错误');
+              console.log(error);
+            })
         } else {
-          console.log('error submit!!');
+          alert('error submit!!');
           return false;
         }
       });
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
+    },
+    buildingChange(checked) {
+      console.log(checked);
+      let id = 0;
+      let roomArray = []
+      for (let o of this.roomData) {
+        if (checked === o.name) {
+          id = o.id
+        }
+      }
+      for (let o of this.roomData) {
+        if (o.pid === id) {
+          let room = {}
+          room['lable'] = room['value'] = o.name
+          roomArray.push(room)
+        }
+      }
+      this.roomOption = roomArray
+    },
+    getAllRoom() {
+      selectAllRoom()
+        .then(response => {
+          this.roomData = response.data
+          let buildingArray = []
+          for (let o of this.roomData) {
+            let building = []
+            if (o.pid == null) {
+              building['label'] = building['value'] = o.name
+              buildingArray.push(building)
+            }
+          }
+          this.buildingOption = buildingArray
+        })
     }
   }
 }
@@ -199,8 +253,9 @@ export default {
 <style lang="scss" scoped>
 .app-container {
   padding: 20px;
+  text-align: center;
   .box-card {
-    width: 700px;
+    width: 800px;
     // max-width: 100%;
     margin: 20px auto;
     .header {
@@ -208,6 +263,13 @@ export default {
       i {
         font-size: 15px;
         color: #999999;
+      }
+      .el-button {
+        span {
+          a {
+            color: #409eff;
+          }
+        }
       }
     }
     .all-checked-box {

@@ -44,13 +44,13 @@ export default {
       padding: 0;
       // margin-bottom: 10px;
       z-index: 10;
-      box-shadow: 1px 1px 5px #00000015;
+      box-shadow: 0 2px 5px #00000015;
     }
 
     .el-main {
       background-color: #e9eef3;
       color: #333;
-      text-align: center;
+      // text-align: center;
       padding: 0;
     }
   }

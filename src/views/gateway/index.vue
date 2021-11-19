@@ -1,12 +1,9 @@
-<!--复制源码transfer -->
+<!-- 网关配置 -->
 <template>
-  <div>
-    <el-trans></el-trans>
-  </div>
+  <div></div>
 </template>
 
 <script>
-
 export default {
   data() {
     return {

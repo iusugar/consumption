@@ -57,7 +57,7 @@ export default {
   // min-width: 300px;
   position: relative;
   margin-left: 80px;
-  box-shadow: 0 2px 5px #00000015;
+  box-shadow: 0 2px 5px #00000025;
   opacity: 0.7;
   transition: opacity 0.2s ease-in-out;
   z-index: 99;

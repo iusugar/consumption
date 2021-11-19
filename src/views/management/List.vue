@@ -97,13 +97,18 @@
                          align="center"
                          width="80">
           <template>
-            <el-tag type="success">on</el-tag>
+            <el-tag type="success">ON</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="power"
                          label="剩余电量"
                          align="center"
                          width="80">
+          <template>
+            <el-progress type="dashboard"
+                         :percentage="percentage"
+                         :color="colors"></el-progress>
+          </template>
         </el-table-column>
         <el-table-column prop="usage"
                          label="设备负载"
@@ -148,7 +153,15 @@ export default {
         { number: 'A1203', addDate: '2021-10-01 10:10', bNum: 'A1', rNum: '101', location: '6号桌', power: '21%' },
         { number: 'A2303', addDate: '2021-10-02 09:19', bNum: 'A2', rNum: '303', location: '1号桌', power: '11%' }
       ],
-      currentRow: null
+      currentRow: null,
+      percentage: 61,
+      colors: [
+        { color: '#f56c6c', percentage: 20 },
+        { color: '#e6a23c', percentage: 40 },
+        { color: '#5cb87a', percentage: 100 }
+        // { color: '#1989fa', percentage: 80 },
+        // { color: '#6f7ad3', percentage: 100 }
+      ]
     }
   },
   mounted() {
@@ -173,6 +186,12 @@ export default {
     },
     handleEdit(index, row) {
       console.log(index, row);
+      this.$axios({
+        method: 'get',
+        url: 'http://localhost:8090'
+      }).then(res => {
+        console.log(res);
+      })
     },
     handleDelete(index, row) {
       console.log(index, row);
@@ -208,16 +227,28 @@ export default {
       font-size: 14px;
       color: #606266;
       /deep/ .el-table__cell {
-        padding: 10px 0;
+        padding: 5px 0;
         .cell {
           line-height: 20px;
           .el-tag {
-            height: 20px;
-            line-height: 20px;
+            height: 35px;
+            line-height: 35px;
           }
         }
       }
     }
   }
+}
+/deep/ .el-progress {
+  .el-progress-circle {
+    width: 35px !important;
+    height: 35px !important;
+  }
+  .el-progress__text {
+    font-size: 10px !important;
+  }
+}
+/deep/ td:nth-child(7) {
+  padding: 5px 0 0 0 !important;
 }
 </style>

@@ -52,9 +52,9 @@ export default {
     top: 30%;
     // left: 220px;
     // margin-top: 180px;
-    box-shadow: 0 2px 5px #00000015;
+    box-shadow: 0 2px 5px #00000025;
     transition: opacity 0.2s ease-in-out;
-    opacity: 0.5;
+    opacity: 0.7;
     &:hover {
       opacity: 1;
     }

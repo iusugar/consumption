@@ -5,7 +5,7 @@ import Layout from '@/layout'
 
 Vue.use(Router)
 export default new Router({
-  mode: 'history',
+  // mode: 'history',
   routes: [
     {
       path: '/',
@@ -27,7 +27,7 @@ export default new Router({
       children: [
         {
           path: 'add-new',
-          component: () => import('@/views/management/addNew'),
+          component: () => import('@/views/management/AddNew'),
           name: 'Management',
           meta: { title: 'Management', icon: 'management', affix: true }
         },
@@ -59,6 +59,28 @@ export default new Router({
         {
           path: 'index',
           component: () => import('@/views/location/index')
+        }
+      ]
+    },
+    {
+      path: '/room',
+      component: Layout,
+      redirect: 'room/index',
+      children: [
+        {
+          path: 'index',
+          component: () => import('@/views/room/index')
+        }
+      ]
+    },
+    {
+      path: '/gateway',
+      component: Layout,
+      redirect: 'gateway/index',
+      children: [
+        {
+          path: 'index',
+          component: () => import('@/views/gateway/index')
         }
       ]
     },
