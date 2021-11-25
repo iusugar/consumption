@@ -2,13 +2,18 @@
 <template>
   <div class="drawer-wrapper">
     <div class="drawer-button"
-         @click="openDrawer"><i class="iconfont icon-menpaihao1"></i></div>
+         @click="openDrawer">
+      <i class="iconfont icon-menpaihao1"></i>
+    </div>
     <el-drawer title="选择位置"
                :visible.sync="drawer"
                :direction="direction"
                :modal="true">
       <div class="room-number-wrapper">
-        <el-scrollbar style="height: 100%;width: 100%;">
+        <el-scrollbar style="height: 100%;width: 100%;"
+                      v-loading="loading"
+                      element-loading-text="拼命加载中"
+                      element-loading-background="rgba(0, 0, 0, 0)">
           <el-row type="flex"
                   justify="space-between"
                   align="middle"
@@ -37,43 +42,62 @@
 </template>
 
 <script>
+import bus from '@/utils/bus.js'
+
 export default {
   data() {
     return {
       drawer: false,
       direction: 'rtl',
-      roomList: [
-        { number: '102', type: '小教室', quantity: 4 },
-        { number: '105', type: '小教室', quantity: 1 },
-        { number: '202', type: '小教室', quantity: 1 },
-        { number: '222', type: '大教室', quantity: 2 },
-        { number: '512', type: '办公室', quantity: 3 },
-        { number: '516', type: '办公室', quantity: 2 },
-        { number: '412', type: '电脑教室', quantity: 7 },
-        { number: '302', type: '小教室', quantity: 1 },
-        { number: '304', type: '小教室', quantity: 1 }
-      ],
-      roomActiveIndex: 0
+      roomList: [],
+      roomActiveIndex: 0,
+      allRoomList: [],
+      loading: true
     }
   },
+  activated() {
+    this.getRoomList()
+  },
   methods: {
+    getRoomList() {
+      bus.$on('allRoomList', e => {
+        this.allRoomList = e.sort((a, b) => { return a.number.localeCompare(b.number) })
+        this.loading = false
+      })
+      bus.$on('checkedBuilding', e => {
+        let rooms = []
+        if (this.allRoomList != null && this.allRoomList.length > 0) {
+          for (let r of this.allRoomList) {
+            let subRoom = r.number.slice(0, r.number.indexOf('-'))
+            if (subRoom === e) {
+              rooms.push({ number: r.number })
+            }
+          }
+        }
+        this.roomList = rooms
+        if (this.roomActiveIndex) {
+          this.$refs.elRow[this.roomActiveIndex].$el.classList.remove('active')
+          this.roomActiveIndex = 0
+        }
+        if (this.roomList != null && this.roomList.length > 0) {
+          bus.$emit('checkedRoom', this.roomList[this.roomActiveIndex].number)
+        }
+      })
+    },
     openDrawer() {
       this.drawer = true
       this.$nextTick(() => {
         this.$refs.elRow[this.roomActiveIndex].$el.classList.add('active')
       })
-      // console.log(this.$refs.elRow[0].$el.classList)
-      // this.$refs.elRow[0].$el.classList.add('active')
     },
     getRowIndex(index) {
-      // this.$refs.elRow[index].$el.className += ' active'
       if (index === this.roomActiveIndex) {
         return
       }
       this.$refs.elRow[this.roomActiveIndex].$el.classList.remove('active')
       this.roomActiveIndex = index
       this.$refs.elRow[index].$el.classList.add('active')
-      console.log(this.$refs.elRow[index].$el.classList);
+      bus.$emit('checkedRoom', this.roomList[index].number)
     }
   }
 }
@@ -85,12 +109,10 @@ export default {
     width: 200px !important;
     height: 400px;
     min-height: 300px;
-    // margin: auto;
     top: 20%;
     background-color: #eff1f7;
     box-shadow: 0 2px 5px #00000015;
 
-    // box-shadow: none;
     .el-drawer__header {
       margin-bottom: 10px;
       // padding-left: 0;

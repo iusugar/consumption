@@ -16,7 +16,6 @@ export default {
       let erd = resizeDetector()
       erd.listenTo(this.$el, debounce(() => {
         this.chart.resize()
-        console.log('resize')
       }, 100))
     }
   }

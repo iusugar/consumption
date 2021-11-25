@@ -19,7 +19,7 @@
                  :loading="loading"
                  class="filter-item"
                  style="width:150px">
-        <el-option v-for="item in socketNums"
+        <el-option v-for="item in deviceNums"
                    :key="item.value"
                    :label="item.label"
                    :value="item.value">
@@ -71,7 +71,7 @@
         <el-table-column prop="number"
                          label="编号"
                          align="center"
-                         width="150">
+                         width="200">
         </el-table-column>
         <el-table-column prop="bNum"
                          label="所在楼号"
@@ -142,11 +142,11 @@ export default {
         building: '',
         room: ''
       },
-      socketNums: [],
+      deviceNums: [],
       value: [],
       list: [],
       loading: false,
-      alternateSocketNums: ['A1202', 'aswa', 'vsaa', 'asbw', 'busad', 'vvvv'],
+      alternatedeviceNums: ['A1202', 'aswa', 'vsaa', 'asbw', 'busad', 'vvvv'],
       buildingNumber: ['A1', 'A2', 'A3', 'C1', 'C2'],
       roomNumber: ['101', '102', '202', '301'],
       tableData: [
@@ -165,7 +165,7 @@ export default {
     }
   },
   mounted() {
-    this.list = this.alternateSocketNums.map(item => {
+    this.list = this.alternatedeviceNums.map(item => {
       return { value: `value:${item}`, label: `${item}` };
     });
   },
@@ -175,13 +175,13 @@ export default {
         this.loading = true;
         setTimeout(() => {
           this.loading = false;
-          this.socketNums = this.list.filter(item => {
+          this.deviceNums = this.list.filter(item => {
             return item.label.toLowerCase()
               .indexOf(query.toLowerCase()) > -1;
           });
         }, 200);
       } else {
-        this.socketNums = [];
+        this.deviceNums = [];
       }
     },
     handleEdit(index, row) {

@@ -5,7 +5,7 @@
     <central-panel />
     <sidebar />
     <drawer />
-      <control />
+    <control />
   </div>
 </template>
 
@@ -22,6 +22,8 @@ export default {
     return {
     }
   },
+  mounted() {
+  },
   methods: {
   }
 }
@@ -31,6 +33,6 @@ export default {
 .app-container {
   text-align: center;
   padding: 20px 20px 70px 20px;
-  background-color: #FFFFFF;
+  // background-color: #FFFFFF;
 }
 </style>

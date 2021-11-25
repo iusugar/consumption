@@ -7,8 +7,17 @@ export function selectAllBuilding() {
   })
 }
 
-export function selectAllRoom() {
+export function fetchAllRoom() {
   return request({
-    url: '/room/selectAllRoom'
+    url: '/room/selectAllRoom',
+    method: 'get'
+  })
+}
+
+export function addRoom(room) {
+  return request({
+    url: '/room/add',
+    method: 'post',
+    data: room
   })
 }

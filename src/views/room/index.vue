@@ -4,7 +4,7 @@
     <div class="title">
       <span>选择楼号添加房间</span>
     </div>
-    <transfer></transfer>
+    <transfer />
   </div>
 </template>
 

@@ -1,15 +1,15 @@
 <!-- 添加房间 -->
 <template>
-  <div class="transfer-container"
-       v-if="refresh">
+  <div class="transfer-container">
     <el-transfer filterable
                  :filter-method="filterMethod"
                  filter-placeholder="请输入房间号"
-                 :button-texts="['撤销', '添加']"
+                 :button-texts="['撤销', '选择']"
                  :titles="['待选', '已选择']"
                  v-model="value"
                  @change="handleChange"
                  :data="transferData"
+                 target-order="unshift"
                  ref="trans">
       <span slot-scope="{ option }">{{ buildingNum }} - {{ option.label }}</span>
       <el-button class="transfer-footer"
@@ -22,7 +22,9 @@
                  type="primary"
                  plain
                  slot="right-footer"
-                 size="small">提交</el-button>
+                 size="small"
+                 @click="openConfirmAlert"
+                 :disabled="checkedRoom.length === 0">添加</el-button>
 
     </el-transfer>
     <el-popover ref="popover"
@@ -42,6 +44,9 @@
 </template>
 
 <script>
+import roomArray from '@/assets/json/transfer-room.json'
+import { addRoom } from '@/api/room.js'
+
 export default {
   data() {
     return {
@@ -64,9 +69,8 @@ export default {
       console.log('清空数据');
     },
     generateData() {
-      console.log('执行generate');
-      const rooms = ['101', '102', '103', '104', '105', '201', '202'];
-      const number = rooms;
+      let rooms = roomArray;
+      let number = rooms;
       rooms.forEach((room, index) => {
         this.transferData.push({
           label: room,
@@ -80,20 +84,47 @@ export default {
       return item.number.indexOf(query) > -1;
     },
     handleChange(value, direction, movedKeys) {
+      this.checkedRoom.splice(0, this.checkedRoom.length)
       for (let i = 0; i < value.length; i++) {
-        console.log(this.buildingNum + '-' + this.transferData[value[i]].label);
+        this.checkedRoom[i] = (this.buildingNum + '-' + this.transferData[value[i]].label)
       }
-      this.checkedRoom = value
     },
     handlePopoverClick(item) {
       this.visible = false;
       this.buildingNum = item;
-      // this.transferData = []
-      // this.refresh = false;
-      // this.refresh = true
-      // this.generateData()
-      // this.$refs.tran.$el.style.display = 'none'
-      // console.log(this.$refs.tran.$children[0].$children[2].$el);
+      this.value.splice(0, this.value.length)
+      this.checkedRoom.splice(0, this.checkedRoom.length)
+    },
+    openConfirmAlert() {
+      let str = JSON.stringify(this.checkedRoom).replace(/\[|]/g, '')
+      this.$confirm(str, '确认添加', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'info'
+      }).then(() => {
+        addRoom(this.checkedRoom).then(response => {
+          console.log(response);
+          if (response.status === 200 && response.data === 'success') {
+            this.value.splice(0, this.value.length)
+            this.checkedRoom.splice(0, this.checkedRoom.length)
+            this.$message({
+              type: 'success',
+              message: '添加成功'
+            })
+          } else {
+            this.$message({
+              showClose: true,
+              message: '添加失败',
+              type: 'error'
+            });
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        })
+      });
     }
   }
 };

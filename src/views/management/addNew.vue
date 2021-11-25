@@ -17,11 +17,15 @@
                  ref="ruleForm"
                  label-width="100px">
           <el-row type="flex">
-            <el-col :span="11">
+            <el-col :span="12">
               <el-form-item label="插座ID号"
                             prop="deviceId">
                 <el-input placeholder="请输入插座ID"
-                          v-model="ruleForm.deviceId"><i slot="prefix"
+                          v-model="ruleForm.deviceId"
+                          clearable
+                          show-word-limit
+                          maxlength="24"
+                          @blur="isExist"><i slot="prefix"
                      class="iconfont icon-4qichexinghao"></i></el-input>
               </el-form-item>
             </el-col>
@@ -29,7 +33,8 @@
               <el-form-item label="插座用途"
                             prop="usageDesc">
                 <el-input placeholder="请输入用途"
-                          v-model="ruleForm.usageDesc"><i slot="prefix"
+                          v-model="ruleForm.usageDesc"
+                          clearable><i slot="prefix"
                      class="iconfont icon-xuqiu-hui"></i></el-input>
               </el-form-item>
             </el-col>
@@ -64,7 +69,7 @@
               <el-form-item label="具体位置"
                             prop="location">
                 <el-select v-model="ruleForm.location"
-                           placeholder="具体位置">
+                           placeholder="位置">
                   <el-option v-for="(option, index) in locationOption"
                              :key="index"
                              :label="option.label"
@@ -79,9 +84,11 @@
                             prop="ratedVoltage">
                 <el-input placeholder="请输入电压"
                           :value="220"
+                          onkeyup="value=value.replace(/[^\d]/g,'')"
                           v-model="ruleForm.ratedVoltage">
                   <i slot="prefix"
-                     class="iconfont icon-dianya"></i>
+                     class="iconfont icon-dianya">
+                  </i>
                 </el-input>
               </el-form-item>
             </el-col>
@@ -89,16 +96,24 @@
               <el-form-item label="额定电流"
                             prop="ratedCurrent">
                 <el-input placeholder="请输入电流"
-                          v-model="ruleForm.ratedCurrent"><i slot="prefix"
-                     class="iconfont icon-dianliu"></i></el-input>
+                          onkeyup="value=value.replace(/[^\d]/g,'')"
+                          v-model="ruleForm.ratedCurrent">
+                  <i slot="prefix"
+                     class="iconfont icon-dianliu">
+                  </i>
+                </el-input>
               </el-form-item>
             </el-col>
             <el-col :span="7">
               <el-form-item label="最大功率"
-                            prop="retedPower">
+                            prop="ratedPower">
                 <el-input placeholder="请输入功率"
-                          v-model="ruleForm.retedPower"><i slot="prefix"
-                     class="iconfont icon-gongshuai"></i></el-input>
+                          onkeyup="value=value.replace(/[^\d]/g,'')"
+                          v-model="ruleForm.ratedPower">
+                  <i slot="prefix"
+                     class="iconfont icon-gongshuai">
+                  </i>
+                </el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -135,8 +150,8 @@
 </template>
 
 <script>
-import { addDevice } from '@/api/device.js'
-import { selectAllRoom } from '@/api/room.js'
+import { addDevice, checkIsExist } from '@/api/device.js'
+import { fetchAllRoom } from '@/api/room.js'
 
 export default {
   data() {
@@ -149,39 +164,59 @@ export default {
         location: '',
         ratedVoltage: '220',
         ratedCurrent: '',
-        retedPower: '',
+        ratedPower: '',
         deviceFunctions: ['监测电流', '监测电压', '监测功率', '远程控制', '记录电量', '红外功能'],
         checkAll: false,
         checkedFunctions: ['监测功率', '记录电量'],
         isIndeterminate: true
       },
       rules: {
-        // deviceId: [
-        //   { required: true, message: '请输入设备id编号', trigger: 'blur' },
-        //   { min: 24, max: 24, message: '长度为24个字符', trigger: 'blur' }
-        // ],
-        // buildNum: [
-        //   { required: true, message: '请选择楼号', trigger: 'change' }
-        // ],
-        // roomNum: [
-        //   { required: true, message: '请选择门牌号', trigger: 'change' }
-        // ],
-        // location: [
-        //   { required: true, message: '请填写具体位置', trigger: 'change' }
-        // ]
+        deviceId: [
+          { required: true, message: '请输入设备id编号', trigger: 'blur' },
+          { min: 24, max: 24, message: '长度为24个字符', trigger: 'blur' }
+        ],
+        buildNum: [
+          { required: true, message: '请选择楼号', trigger: 'change' }
+        ],
+        roomNum: [
+          { required: true, message: '请选择门牌号', trigger: 'change' }
+        ],
+        location: [
+          { required: true, message: '请填写具体位置', trigger: 'change' }
+        ]
       },
       buildingOption: [],
       roomOption: [],
-      locationOption: [{
-        'label': '1号桌', value: '1号桌'
-      }],
-      roomData: []
+      locationOption: [
+        { 'label': '1号桌', value: '1号桌' },
+        { 'label': '2号桌', value: '2号桌' },
+        { 'label': '3号桌', value: '3号桌' },
+        { 'label': '4号桌', value: '4号桌' },
+        { 'label': '5号桌', value: '5号桌' },
+        { 'label': '6号桌', value: '6号桌' }],
+      roomData: [],
+      checkedBuilding: ''
     };
   },
-  mounted() {
-    this.getAllRoom();
+  // mounted() {
+  //   this.getAllRoom();
+  // },
+  activated() {
+    this.getAllRoom()
   },
   methods: {
+    isExist() {
+      checkIsExist(this.ruleForm.deviceId).then(response => {
+        if (response.data === 'exist') {
+          this.$message({
+            message: '已存在这个插座id',
+            type: 'warning'
+          });
+        }
+      }).catch(err => {
+        console.log(err);
+      })
+    },
     handleCheckAllChange(val) {
       this.ruleForm.checkedFunctions = val ? this.ruleForm.deviceFunctions : [];
       this.ruleForm.isIndeterminate = false;
@@ -194,18 +229,32 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          console.log(this.ruleForm);
           addDevice(this.ruleForm)
             .then(response => {
-              console.log(response);
-              console.log('发送成功');
+              if (response.data === 'success') {
+                console.log('成功');
+                this.$notify({
+                  title: '成功',
+                  message: '成功添加新的插座',
+                  type: 'success',
+                  duration: 2000
+                })
+              } else if (response.data === 'exist') {
+                this.$message({
+                  message: '已存在这个插座id',
+                  type: 'warning'
+                });
+              }
             })
             .catch(error => {
               console.log('发生了错误');
               console.log(error);
             })
         } else {
-          alert('error submit!!');
+          this.$message({
+            message: '请按要求填写完整',
+            type: 'error'
+          });
           return false;
         }
       });
@@ -214,7 +263,8 @@ export default {
       this.$refs[formName].resetFields();
     },
     buildingChange(checked) {
-      console.log(checked);
+      this.ruleForm.roomNum = ''
+      this.checkedBuilding = checked;
       let id = 0;
       let roomArray = []
       for (let o of this.roomData) {
@@ -232,7 +282,7 @@ export default {
       this.roomOption = roomArray
     },
     getAllRoom() {
-      selectAllRoom()
+      fetchAllRoom()
         .then(response => {
           this.roomData = response.data
           let buildingArray = []
@@ -244,6 +294,8 @@ export default {
             }
           }
           this.buildingOption = buildingArray
+          this.buildingChange(this.checkedBuilding)
+          this.ruleForm.roomNum = ''
         })
     }
   }
@@ -255,7 +307,7 @@ export default {
   padding: 20px;
   text-align: center;
   .box-card {
-    width: 800px;
+    width: 850px;
     // max-width: 100%;
     margin: 20px auto;
     .header {

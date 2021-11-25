@@ -19,12 +19,11 @@ export default {
   },
   computed: {
     key() {
-      console.log(this.$route.path);
+      // console.log(this.$route.path);
       return this.$route.path
     }
   },
   mounted() {
-    // console.log('app-main组件 --->' + this.key)
   }
 }
 </script>

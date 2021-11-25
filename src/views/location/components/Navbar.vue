@@ -1,14 +1,14 @@
 <!-- 横栏显示当前房间的插座列表 -->
 <template>
   <div class="nav-wrapper">
-    <el-tabs v-model="editableTabsValue"
+    <el-tabs v-model="deviceTabsValue"
              type="card"
              :stretch='false'
              :closable='true'
              @tab-click="handleClick"
              ref="tabs">
-      <el-tab-pane v-for="(item) in editableTabs"
-                   :key="item.name"
+      <el-tab-pane v-for="(item) in deviceTabs"
+                   :key="item.id"
                    :label="item.title"
                    :name="item.name">
       </el-tab-pane>
@@ -17,27 +17,50 @@
 </template>
 
 <script>
+import { fetchDevice } from '@/api/device.js'
+import bus from '@/utils/bus.js'
+
 export default {
-  data() {
-    return {
-      editableTabsValue: '1',
-      editableTabs: [
-        { title: 'A1202-1', name: '1', state: 'on' }, { title: 'A1202-2', name: '2', state: 'off' }, { title: 'A1202-3', name: '3', state: 'on' },
-        { title: 'A1202-4', name: '4', state: 'off' }, { title: 'A1202-5', name: '5', state: 'off' }, { title: 'A1202-6', name: '6', state: 'on' },
-        { title: 'A1202-7', name: '7', state: 'on' }, { title: 'A1202-8', name: '8', state: 'off' }, { title: 'A1202-9', name: '9', state: 'on' }]
+  props: {
+    roomList: {
     }
   },
-  mounted() {
+  data() {
+    return {
+      deviceTabsValue: '0',
+      deviceTabs: [
+        // { title: 'A1201111111112-11', name: '1', state: 'on' }, { title: 'A1202-2', name: '2', state: 'off' }
+      ],
+      idKey: 0
+    }
+  },
+  activated() {
+    this.getCheckedRoom()
     this.$nextTick(() => {
       this.setState()
       // this.$refs['tabs'].$el.getElementsByTagName('span')[0].classList.value = ''
-    })
+    });
   },
   methods: {
+    getCheckedRoom() {
+      bus.$on('checkedRoom', e => {
+        // console.log(e);
+        let tabs = []
+        fetchDevice(e).then(response => {
+          let deviceData = response.data
+          let i = 0
+          for (let d of deviceData) {
+            tabs.push({ id: this.idKey++, title: d.deviceId, name: i++ + '', state: 'on' })
+          }
+          this.deviceTabs = tabs
+          bus.$emit('locationData', deviceData)
+        })
+      })
+    },
     setState() {
       var tabsArray = this.$refs['tabs'].$el.getElementsByClassName('el-tabs__item')
       for (let i = 0; i < tabsArray.length; i++) {
-        if (this.editableTabs[i].state === 'on') {
+        if (this.deviceTabs[i].state === 'on') {
           tabsArray[i].classList.add('on')
         }
       }
@@ -54,6 +77,7 @@ export default {
 <style lang="scss" scoped>
 .nav-wrapper {
   width: 40%;
+  height: 40px;
   // min-width: 300px;
   position: relative;
   margin-left: 80px;

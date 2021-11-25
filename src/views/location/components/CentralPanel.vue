@@ -6,7 +6,9 @@
               :sm="24"
               :md="24"
               :lg="12">
-        <div class="plane-model"></div>
+        <div class="plane-model">
+          {{locationList}}111
+        </div>
       </el-col>
       <el-col :xs="24"
               :sm="24"
@@ -21,7 +23,6 @@
           <line-chart width="100%"
                       height="100%" />
         </div>
-
       </el-col>
     </el-row>
   </div>
@@ -29,10 +30,28 @@
 
 <script>
 import LineChart from './chart/LineChart.vue'
+import bus from '@/utils/bus.js'
+
 export default {
   components: { LineChart },
   data() {
     return {
+      deviceData: [],
+      locationList: []
+    }
+  },
+  mounted() {
+    this.getPosition()
+  },
+  methods: {
+    getPosition() {
+      bus.$on('locationData', e => {
+        this.deviceData = e
+        this.locationList.splice(0, this.locationList.length)
+        for (let data of e) {
+          this.locationList.push({devId: data.id, location: data.location})
+        }
+      })
     }
   }
 }
@@ -65,6 +84,7 @@ export default {
       width: 100%;
       height: 300px;
       margin-bottom: 50px;
+      box-shadow: 0 2px 5px #00000025;
     }
   }
 }
