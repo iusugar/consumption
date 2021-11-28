@@ -7,7 +7,7 @@
               :md="24"
               :lg="12">
         <div class="plane-model">
-          {{locationList}}111
+          {{location}}
         </div>
       </el-col>
       <el-col :xs="24"
@@ -37,7 +37,9 @@ export default {
   data() {
     return {
       deviceData: [],
-      locationList: []
+      locationList: [],
+      location: '占位符',
+      devId: ''
     }
   },
   mounted() {
@@ -45,11 +47,18 @@ export default {
   },
   methods: {
     getPosition() {
-      bus.$on('locationData', e => {
+      bus.$on('deviceDataList', e => {
         this.deviceData = e
         this.locationList.splice(0, this.locationList.length)
+        this.location = ''
         for (let data of e) {
-          this.locationList.push({devId: data.id, location: data.location})
+          this.locationList.push({ devId: data.id, location: data.location })
+        }
+      })
+      bus.$on('checkedDevice', e => {
+        // console.log(e);
+        if (this.locationList != null && this.locationList.length > 0) {
+          this.location = this.locationList[e].location;
         }
       })
     }

@@ -7,6 +7,9 @@
 <script>
 import * as echarts from 'echarts'
 import resize from '@/views/dashboard/user/components/mixins/resize'
+import bus from '@/utils/bus.js'
+import { fetchYesterdayData } from '@/api/location.js'
+
 export default {
   mixins: [resize],
   props: {
@@ -25,10 +28,17 @@ export default {
   },
   data() {
     return {
-      chart: null
+      chart: null,
+      insVoltageList: [],
+      insCurrentList: [],
+      insPowerList: []
     }
   },
+  updated() {
+    this.initChart()
+  },
   mounted() {
+    this.getElectricityData()
     this.$nextTick(() => {
       this.initChart()
     })
@@ -41,6 +51,35 @@ export default {
     this.chart = null
   },
   methods: {
+    getElectricityData() {
+      bus.$on('checkedDeviceId', e => {
+        fetchYesterdayData(e).then(response => {
+          var electricityDataList = response.data
+          var dateList = []
+          this.insVoltageList = []
+          this.insCurrentList = []
+          this.insPowerList = []
+          if (electricityDataList != null && electricityDataList.length > 0) {
+            for (let data of electricityDataList) {
+              dateList.push(new Date(Date.parse(data.createTime)).getHours())
+            }
+            for (let i = 0, j = 0; i < 24; i++) {
+              if (i === dateList[j] && j < dateList.length) {
+                this.insVoltageList[i] = electricityDataList[j].insVoltage
+                this.insCurrentList[i] = electricityDataList[j].insCurrent
+                this.insPowerList[i] = electricityDataList[j].insPower
+                j++
+              } else {
+                this.insVoltageList[i] = 0
+                this.insCurrentList[i] = 0
+                this.insPowerList[i] = 0
+              }
+            }
+          }
+          this.initChart()
+        })
+      })
+    },
     initChart() {
       this.chart = echarts.init(this.$el)
       this.chart.setOption({
@@ -72,7 +111,6 @@ export default {
             type: 'category',
             boundaryGap: false,
             data: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00']
-
           }
         ],
         yAxis: [
@@ -107,7 +145,8 @@ export default {
             emphasis: {
               focus: 'series'
             },
-            data: [221, 220, 230, 226, 210, 220, 231, 200, 210, 210, 221, 220, 230, 226, 210, 220, 231, 200, 210, 210, 218, 220, 219, 231]
+            // data: [221, 220, 230, 226, 210, 220, 231, 200, 210, 210, 221, 220, 230, 226, 210, 220, 231, 200, 210, 210, 218, 220, 219, 231]
+            data: this.insVoltageList
           },
           {
             name: '电流',
@@ -134,8 +173,8 @@ export default {
             emphasis: {
               focus: 'series'
             },
-            data: [300, 280, 250, 260, 270, 300, 550, 500, 400, 390, 380, 390, 400, 500, 600, 750, 650, 700, 600, 400, 390, 480, 678, 560]
-
+            // data: [300, 280, 250, 260, 270, 300, 550, 500, 400, 390, 380, 390, 400, 500, 600, 750, 650, 700, 600, 400, 390, 480, 678, 560]
+            data: this.insCurrentList
           },
           {
             name: '功率',
@@ -166,8 +205,8 @@ export default {
             emphasis: {
               focus: 'series'
             },
-            data: [300, 280, 250, 260, 270, 300, 550, 500, 400, 390, 380, 390, 400, 500, 600, 750, 370, 700, 600, 400, 390, 480, 678, 560]
-
+            // data: [300, 280, 250, 260, 270, 300, 550, 500, 400, 390, 380, 390, 400, 500, 600, 750, 370, 700, 600, 400, 390, 480, 678, 560]
+            data: this.insPowerList
           }
         ]
       })

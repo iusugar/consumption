@@ -34,26 +34,39 @@ export default {
       idKey: 0
     }
   },
-  activated() {
-    this.getCheckedRoom()
+  updated() {
     this.$nextTick(() => {
       this.setState()
-      // this.$refs['tabs'].$el.getElementsByTagName('span')[0].classList.value = ''
     });
+  },
+  activated() {
+    this.getCheckedRoom()
+    // this.$nextTick(() => {
+    //   this.setState()
+    //   // this.$refs['tabs'].$el.getElementsByTagName('span')[0].classList.value = ''
+    // });
   },
   methods: {
     getCheckedRoom() {
       bus.$on('checkedRoom', e => {
-        // console.log(e);
         let tabs = []
         fetchDevice(e).then(response => {
           let deviceData = response.data
           let i = 0
           for (let d of deviceData) {
-            tabs.push({ id: this.idKey++, title: d.deviceId, name: i++ + '', state: 'on' })
+            tabs.push({ id: d.id, title: d.deviceId, name: i++ + '', state: 'on' })
           }
           this.deviceTabs = tabs
-          bus.$emit('locationData', deviceData)
+          // 中间定位板块接收
+          bus.$emit('deviceDataList', deviceData)
+          this.deviceTabsValue = '0'
+          // 中间定位板块接收
+          bus.$emit('checkedDevice', this.deviceTabsValue)
+          if (tabs != null && tabs.length > 0) {
+            bus.$emit('checkedDeviceId', tabs[0].id)
+          } else {
+            bus.$emit('checkedDeviceId', 0)
+          }
         })
       })
     },
@@ -66,9 +79,11 @@ export default {
       }
     },
     handleClick(tab) {
-      this.$nextTick(() => {
-        this.setState()
-      })
+      this.setState()
+      // 中间定位板块接收
+      bus.$emit('checkedDevice', tab.name)
+      // 图表接收
+      bus.$emit('checkedDeviceId', this.deviceTabs[tab.index].id)
     }
   }
 }

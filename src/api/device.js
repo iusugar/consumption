@@ -23,3 +23,10 @@ export function fetchDevice(room) {
     params: { room }
   })
 }
+
+export function fetchAllDevice() {
+  return request({
+    url: '/device/getAllDevice',
+    method: 'get'
+  })
+}

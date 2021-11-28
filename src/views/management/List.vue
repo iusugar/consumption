@@ -19,7 +19,7 @@
                  :loading="loading"
                  class="filter-item"
                  style="width:150px">
-        <el-option v-for="item in deviceNums"
+        <el-option v-for="item in deviceNumList"
                    :key="item.value"
                    :label="item.label"
                    :value="item.value">
@@ -71,7 +71,7 @@
         <el-table-column prop="number"
                          label="编号"
                          align="center"
-                         width="200">
+                         width="250">
         </el-table-column>
         <el-table-column prop="bNum"
                          label="所在楼号"
@@ -91,7 +91,7 @@
         <el-table-column prop="addDate"
                          label="添加时间"
                          align="center"
-                         width="150">
+                         width="200">
         </el-table-column>
         <el-table-column label="状态"
                          align="center"
@@ -133,6 +133,8 @@
 </template>
 
 <script>
+import { fetchAllDevice } from '@/api/device.js'
+
 export default {
   data() {
     return {
@@ -142,11 +144,11 @@ export default {
         building: '',
         room: ''
       },
-      deviceNums: [],
+      deviceNumList: [],
       value: [],
       list: [],
       loading: false,
-      alternatedeviceNums: ['A1202', 'aswa', 'vsaa', 'asbw', 'busad', 'vvvv'],
+      alternateDeviceNum: ['aswa', 'vsaa', 'asbw'],
       buildingNumber: ['A1', 'A2', 'A3', 'C1', 'C2'],
       roomNumber: ['101', '102', '202', '301'],
       tableData: [
@@ -161,27 +163,49 @@ export default {
         { color: '#5cb87a', percentage: 100 }
         // { color: '#1989fa', percentage: 80 },
         // { color: '#6f7ad3', percentage: 100 }
-      ]
+      ],
+      allDeviceDataList: []
     }
   },
-  mounted() {
-    this.list = this.alternatedeviceNums.map(item => {
-      return { value: `value:${item}`, label: `${item}` };
-    });
+  activated() {
+    this.getAllDevice()
+    // this.list = this.alternateDeviceNum.map(item => {
+    //   return { value: `value:${item}`, label: `${item}` };
+    // });
   },
   methods: {
+    getAllDevice() {
+      fetchAllDevice().then(response => {
+        this.allDeviceDataList = response.data
+        var tableData = []
+        for (let data of this.allDeviceDataList) {
+          let device = {}
+          device['number'] = data.deviceId
+          device['addDate'] = data.createTime
+          device['bNum'] = data.buildNum
+          device['rNum'] = data.roomNum
+          device['location'] = data.location
+          tableData.push(device)
+          this.alternateDeviceNum.push(data.deviceId)
+        }
+        this.tableData = tableData
+        this.list = this.alternateDeviceNum.map(item => {
+          return { value: `value:${item}`, label: `${item}` };
+        });
+      })
+    },
     remoteMethod(query) {
       if (query !== '') {
         this.loading = true;
         setTimeout(() => {
           this.loading = false;
-          this.deviceNums = this.list.filter(item => {
+          this.deviceNumList = this.list.filter(item => {
             return item.label.toLowerCase()
               .indexOf(query.toLowerCase()) > -1;
           });
         }, 200);
       } else {
-        this.deviceNums = [];
+        this.deviceNumList = [];
       }
     },
     handleEdit(index, row) {

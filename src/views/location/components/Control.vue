@@ -38,9 +38,6 @@ export default {
     return {
       equipments: [
         { name: '打印机', state: 'on', value: true }, { name: '电脑', state: 'off', value: false }, { name: '投影仪', state: 'on', value: true },
-        { name: '台灯', state: 'on', value: true }, { name: '空调', state: 'off', value: false }, { name: '显示器', state: 'off', value: false },
-        { name: '台灯', state: 'on', value: true }, { name: '空调', state: 'off', value: false }, { name: '显示器', state: 'off', value: false },
-        { name: '台灯', state: 'on', value: true }, { name: '空调', state: 'off', value: false }, { name: '显示器', state: 'off', value: false },
         { name: '台灯', state: 'on', value: true }, { name: '空调', state: 'off', value: false }, { name: '显示器', state: 'off', value: false }
       ],
       loading: false
