@@ -9,20 +9,20 @@ const instance = axios.create({
 
 // 添加请求拦截器
 instance.interceptors.request.use(function (config) {
-  // 在发送请求之前做些什么
+  // 在发送请求之前的处理
   return config;
 }, function (error) {
-  // 对请求错误做些什么
+  // 对请求错误的处理
   return Promise.reject(error);
 });
 
 // 添加响应拦截器
 instance.interceptors.response.use(function (response) {
-  // 对响应数据做点什么
+  // 对返回数据处理
   return response;
 }, function (error) {
-  // 对响应错误做点什么
-  console.log('err' + error) // for debug
+  // 对返回错误处理
+  console.log('error' + error) // for debug
   Message({
     message: error.message,
     type: 'error',

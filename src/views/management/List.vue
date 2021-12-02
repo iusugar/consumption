@@ -4,13 +4,14 @@
     <div class="filter-container">
       <el-input placeholder="插座用途"
                 prefix-icon="el-icon-search"
-                v-model="queryList.usage"
+                v-model="queryList.usageDesc"
                 clearable
                 class="filter-item"
                 style="width:200px">
       </el-input>
 
-      <el-select v-model="queryList.number"
+      <el-select v-model="queryList.deviceId"
+                 clearable
                  filterable
                  remote
                  reserve-keyword
@@ -18,7 +19,7 @@
                  :remote-method="remoteMethod"
                  :loading="loading"
                  class="filter-item"
-                 style="width:150px">
+                 style="width:250px">
         <el-option v-for="item in deviceNumList"
                    :key="item.value"
                    :label="item.label"
@@ -26,7 +27,7 @@
         </el-option>
       </el-select>
 
-      <el-select v-model="queryList.building"
+      <el-select v-model="queryList.buildNum"
                  clearable
                  placeholder="楼号"
                  class="filter-item"
@@ -38,7 +39,7 @@
         </el-option>
       </el-select>
 
-      <el-select v-model="queryList.room"
+      <el-select v-model="queryList.roomNum"
                  clearable
                  placeholder="门牌号"
                  class="filter-item"
@@ -52,7 +53,8 @@
 
       <el-button class="filter-item search-btn"
                  type="primary"
-                 icon="el-icon-search">
+                 icon="el-icon-search"
+                 @click="getDeviceByQuery">
         查找
       </el-button>
       <el-button class="filter-item search-btn"
@@ -63,13 +65,14 @@
     </div>
 
     <div class="table-container">
-      <el-table :data="tableData"
+      <el-table :data="pageData"
+                v-loading="tableLoading"
                 highlight-current-row
                 border
                 fit
                 stripe>
-        <el-table-column prop="number"
-                         label="编号"
+        <el-table-column prop="deviceId"
+                         label="设备ID"
                          align="center"
                          width="250">
         </el-table-column>
@@ -110,7 +113,7 @@
                          :color="colors"></el-progress>
           </template>
         </el-table-column>
-        <el-table-column prop="usage"
+        <el-table-column prop="usageDesc"
                          label="设备负载"
                          align="center"
                          min-width="150">
@@ -129,69 +132,236 @@
         </el-table-column>
       </el-table>
     </div>
+    <div class="pagination-container">
+      <el-pagination background
+                     layout="prev, pager, next"
+                     :total="this.tableData.length"
+                     :page-size="pageSize"
+                     :current-page="currentPage"
+                     @current-change="handleCurrentChange">
+      </el-pagination>
+    </div>
+
+    <el-dialog title="编辑"
+               :visible.sync="dialogFormVisible">
+      <el-form :model="dialogForm"
+               ref="dialogForm"
+               :rules="rules"
+               label-position="top">
+        <el-row type="flex"
+                :gutter="50">
+          <el-col :span="12">
+            <el-form-item label="设备ID">
+              <el-input v-model="dialogForm.deviceId"
+                        :disabled="true">
+              </el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="添加时间">
+              <el-input v-model="dialogForm.addDate"
+                        :disabled="true">
+              </el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row type="flex"
+                justify="space-between">
+          <el-form-item label="空间位置"
+                        :rules="{required: true, message: '不能为空', trigger: 'change'}">
+            <el-col :span="6">
+              <el-form-item prop="buildNum">
+                <el-select v-model="dialogForm.buildNum"
+                           @change="buildingChange">
+                  <el-option v-for="option in buildingOption"
+                             :key="option.value"
+                             :label="option.label"
+                             :value="option.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item prop="roomNum">
+                <el-select v-model="dialogForm.roomNum">
+                  <el-option v-for="option in roomOption"
+                             :key="option.value"
+                             :label="option.label"
+                             :value="option.value"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item prop="location">
+                <el-select v-model="dialogForm.location">
+                  <el-option v-for="option in locationOption"
+                             :key="option.value"
+                             :label="option.label"
+                             :value="option.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-form-item>
+
+        </el-row>
+
+        <!-- <el-form-item label="活动区域"
+                      :label-width="formLabelWidth">
+          <el-select v-model="form.region"
+                     placeholder="请选择活动区域">
+            <el-option label="区域一"
+                       value="shanghai"></el-option>
+            <el-option label="区域二"
+                       value="beijing"></el-option>
+          </el-select>
+        </el-form-item> -->
+      </el-form>
+      <div slot="footer"
+           class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary"
+                   @click="submitForm('dialogForm')">更 新</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { fetchAllDevice } from '@/api/device.js'
+import { fetchAllDevice, fetchDeviceList, updateDevice } from '@/api/device.js'
+import { fetchAllRoom } from '@/api/room.js'
+import buildingArray from '@/assets/json/building.json'
+import roomArray from '@/assets/json/room.json'
 
 export default {
   data() {
     return {
       queryList: {
-        usage: '',
-        number: '',
-        building: '',
-        room: ''
+        usageDesc: '',
+        deviceId: '',
+        buildNum: '',
+        roomNum: ''
       },
+      // 加载状态
+      tableLoading: true,
+      loading: false,
+      // select自动补全快速搜索
       deviceNumList: [],
       value: [],
       list: [],
-      loading: false,
-      alternateDeviceNum: ['aswa', 'vsaa', 'asbw'],
-      buildingNumber: ['A1', 'A2', 'A3', 'C1', 'C2'],
-      roomNumber: ['101', '102', '202', '301'],
+      alternateDeviceNum: [],
+      // 静态房间数据json
+      buildingNumber: buildingArray,
+      roomNumber: roomArray,
+      // 表格数据
       tableData: [
-        { number: 'A1203', addDate: '2021-10-01 10:10', bNum: 'A1', rNum: '101', location: '6号桌', power: '21%' },
-        { number: 'A2303', addDate: '2021-10-02 09:19', bNum: 'A2', rNum: '303', location: '1号桌', power: '11%' }
+        // { deviceId: 'A1203', addDate: '2021-10-01 10:10', bNum: 'A1', rNum: '101', location: '6号桌', power: '21%' }
       ],
-      currentRow: null,
+      // 分页展示数据
+      pageData: [],
       percentage: 61,
       colors: [
         { color: '#f56c6c', percentage: 20 },
         { color: '#e6a23c', percentage: 40 },
         { color: '#5cb87a', percentage: 100 }
-        // { color: '#1989fa', percentage: 80 },
-        // { color: '#6f7ad3', percentage: 100 }
       ],
-      allDeviceDataList: []
+      // 所有设备数据
+      allDeviceDataList: [],
+      // 分页
+      pageSize: 10,
+      currentPage: 1,
+      // dialog
+      dialogFormVisible: false,
+      dialogForm: {
+        deviceId: '',
+        addDate: '',
+        buildNum: '',
+        roomNum: '',
+        location: ''
+      },
+      rules: {
+        buildNum: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ],
+        roomNum: [
+          { required: true, message: '不能为空', trigger: 'blur' }
+        ],
+        location: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ]
+      },
+      // dialog下拉框选项
+      buildingOption: [],
+      roomOption: [],
+      locationOption: [
+        { 'label': '1号桌', value: '1号桌' },
+        { 'label': '2号桌', value: '2号桌' },
+        { 'label': '3号桌', value: '3号桌' },
+        { 'label': '4号桌', value: '4号桌' },
+        { 'label': '5号桌', value: '5号桌' },
+        { 'label': '6号桌', value: '6号桌' }],
+      roomData: []
     }
   },
   activated() {
     this.getAllDevice()
-    // this.list = this.alternateDeviceNum.map(item => {
-    //   return { value: `value:${item}`, label: `${item}` };
-    // });
+    this.getAllRoom()
   },
   methods: {
     getAllDevice() {
+      this.deviceNumList = []
       fetchAllDevice().then(response => {
+        this.tableLoading = false
         this.allDeviceDataList = response.data
-        var tableData = []
+        var addTableData = []
         for (let data of this.allDeviceDataList) {
           let device = {}
-          device['number'] = data.deviceId
-          device['addDate'] = data.createTime
+          device['deviceId'] = data.deviceId
+          let strDate = new Date(Date.parse(data.createTime)).toLocaleString('chinese', { hour12: false })
+          device['addDate'] = strDate.replace(/\//g, '-')
           device['bNum'] = data.buildNum
           device['rNum'] = data.roomNum
           device['location'] = data.location
-          tableData.push(device)
+          addTableData.push(device)
           this.alternateDeviceNum.push(data.deviceId)
         }
-        this.tableData = tableData
+        this.tableData = addTableData
+        this.pageData = this.tableData.slice(0, this.pageSize)
         this.list = this.alternateDeviceNum.map(item => {
-          return { value: `value:${item}`, label: `${item}` };
+          return { value: `${item}`, label: `${item}` };
         });
+      }).catch(error => {
+        this.tableLoading = false
+        console.log(error);
+      })
+    },
+    getDeviceByQuery() {
+      this.deviceNumList = []
+      this.tableLoading = true
+      fetchDeviceList(this.queryList).then(response => {
+        this.tableLoading = false
+        this.allDeviceDataList = response.data
+        var addTableData = []
+        for (let data of this.allDeviceDataList) {
+          let device = {}
+          device['deviceId'] = data.deviceId
+          let strDate = new Date(Date.parse(data.createTime)).toLocaleString('chinese', { hour12: false })
+          device['addDate'] = strDate.replace(/\//g, '-')
+          device['bNum'] = data.buildNum
+          device['rNum'] = data.roomNum
+          device['location'] = data.location
+          addTableData.push(device)
+          this.alternateDeviceNum.push(data.deviceId)
+        }
+        this.tableData = addTableData
+        this.pageData = this.tableData.slice(0, this.pageSize)
+        // this.list = this.alternateDeviceNum.map(item => {
+        //   return { value: `${item}`, label: `${item}` };
+        // });
+      }).catch(error => {
+        this.tableLoading = false
+        console.log(error);
       })
     },
     remoteMethod(query) {
@@ -208,17 +378,65 @@ export default {
         this.deviceNumList = [];
       }
     },
+    getAllRoom() {
+      fetchAllRoom()
+        .then(response => {
+          this.roomData = response.data
+          console.log(this.roomData);
+          let buildingArray = []
+          for (let o of this.roomData) {
+            let building = []
+            if (o.pid == null) {
+              building['label'] = building['value'] = o.name
+              buildingArray.push(building)
+            }
+          }
+          this.buildingOption = buildingArray
+        })
+    },
+    buildingChange(checked) {
+      let id = 0;
+      let roomArray = []
+      for (let o of this.roomData) {
+        if (checked === o.name) {
+          id = o.id
+        }
+      }
+      for (let o of this.roomData) {
+        if (o.pid === id) {
+          let room = {}
+          room['label'] = room['value'] = o.name.substring(o.name.indexOf('-') + 1)
+          roomArray.push(room)
+        }
+      }
+      this.roomOption = roomArray
+      this.dialogForm.roomNum = ''
+    },
     handleEdit(index, row) {
-      console.log(index, row);
-      this.$axios({
-        method: 'get',
-        url: 'http://localhost:8090'
-      }).then(res => {
-        console.log(res);
-      })
+      this.buildingChange(row.bNum)
+      this.dialogForm.deviceId = row.deviceId
+      this.dialogForm.addDate = row.addDate
+      this.dialogForm.buildNum = row.bNum
+      this.dialogForm.roomNum = row.rNum
+      this.dialogForm.location = row.location
+      this.dialogFormVisible = true
     },
     handleDelete(index, row) {
       console.log(index, row);
+    },
+    handleCurrentChange(current) {
+      this.pageData = this.tableData.slice((current - 1) * this.pageSize, (current - 1) * this.pageSize + this.pageSize)
+    },
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          updateDevice(this.dialogForm).then(response => {
+            console.log(response.data);
+          })
+        } else {
+          alert('校验不通过')
+        }
+      })
     }
   }
 }
@@ -247,7 +465,7 @@ export default {
     position: relative;
     .el-table {
       width: 100%;
-      position: absolute;
+      // position: absolute;
       font-size: 14px;
       color: #606266;
       /deep/ .el-table__cell {
@@ -260,6 +478,22 @@ export default {
           }
         }
       }
+    }
+  }
+  .pagination-container {
+    text-align: center;
+    padding: 50px;
+  }
+  /deep/ .el-dialog {
+    .el-dialog__header {
+      background-color: rgb(31, 62, 102);
+      span,
+      i {
+        color: #fff;
+      }
+    }
+    .el-dialog__body {
+      padding: 10px 20px;
     }
   }
 }

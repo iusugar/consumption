@@ -49,7 +49,8 @@
                   <el-option v-for="(option, index) in buildingOption"
                              :key="index"
                              :label="option.label"
-                             :value="option.value"></el-option>
+                             :value="option.value">
+                  </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -232,7 +233,7 @@ export default {
           addDevice(this.ruleForm)
             .then(response => {
               if (response.data === 'success') {
-                console.log('成功');
+                console.log(response);
                 this.$notify({
                   title: '成功',
                   message: '成功添加新的插座',
@@ -275,7 +276,7 @@ export default {
       for (let o of this.roomData) {
         if (o.pid === id) {
           let room = {}
-          room['lable'] = room['value'] = o.name
+          room['label'] = room['value'] = o.name
           roomArray.push(room)
         }
       }

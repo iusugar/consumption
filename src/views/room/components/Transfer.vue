@@ -44,7 +44,8 @@
 </template>
 
 <script>
-import roomArray from '@/assets/json/transfer-room.json'
+import roomArray from '@/assets/json/room.json'
+import buildingArray from '@/assets/json/building.json'
 import { addRoom } from '@/api/room.js'
 
 export default {
@@ -52,7 +53,7 @@ export default {
     return {
       transferData: [],
       value: [],
-      buildings: ['A1', 'A2', 'A3', 'A4', 'B1', 'B2', 'B3', 'C1', 'C2'],
+      buildings: buildingArray,
       buildingNum: 'A1',
       visible: false,
       checkedRoom: [],
@@ -65,9 +66,6 @@ export default {
   updated() {
   },
   methods: {
-    getOne() {
-      console.log('清空数据');
-    },
     generateData() {
       let rooms = roomArray;
       let number = rooms;
@@ -78,7 +76,6 @@ export default {
           number: number[index]
         });
       });
-      // return tdata;
     },
     filterMethod(query, item) {
       return item.number.indexOf(query) > -1;
