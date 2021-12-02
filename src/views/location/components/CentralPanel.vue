@@ -38,7 +38,7 @@ export default {
     return {
       deviceData: [],
       locationList: [],
-      location: '占位符',
+      location: '稍等',
       devId: ''
     }
   },
@@ -52,13 +52,14 @@ export default {
         this.locationList.splice(0, this.locationList.length)
         this.location = ''
         for (let data of e) {
-          this.locationList.push({ devId: data.id, location: data.location })
+          this.locationList.push({ devId: data.id, location: data.location, roomNum: data.roomNum })
         }
       })
       bus.$on('checkedDevice', e => {
         // console.log(e);
         if (this.locationList != null && this.locationList.length > 0) {
-          this.location = this.locationList[e].location;
+          console.log(this.locationList[e]);
+          this.location = this.locationList[e].roomNum + '-' + this.locationList[e].location;
         }
       })
     }
@@ -75,6 +76,8 @@ export default {
     .plane-model {
       width: 100%;
       height: 300px;
+      padding: 20px;
+      box-sizing: border-box;
       margin-bottom: 20px;
       background-color: #ffffffaa;
       box-shadow: 0 2px 5px #00000015;

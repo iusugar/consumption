@@ -95,7 +95,7 @@ export default {
         },
         legend: {
           data: ['电流', '电压', '功率'],
-          backgroundColor: '#fff',
+          backgroundColor: '#FFFFFFcc',
           borderRadius: 5,
           padding: 15,
           itemGap: 20

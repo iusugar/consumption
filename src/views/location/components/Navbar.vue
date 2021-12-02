@@ -41,10 +41,6 @@ export default {
   },
   activated() {
     this.getCheckedRoom()
-    // this.$nextTick(() => {
-    //   this.setState()
-    //   // this.$refs['tabs'].$el.getElementsByTagName('span')[0].classList.value = ''
-    // });
   },
   methods: {
     getCheckedRoom() {
@@ -54,7 +50,7 @@ export default {
           let deviceData = response.data
           let i = 0
           for (let d of deviceData) {
-            tabs.push({ id: d.id, title: d.deviceId, name: i++ + '', state: 'on' })
+            tabs.push({ id: d.id, title: d.deviceId, name: i++ + '', state: d.currentState ? 'on' : 'off' })
           }
           this.deviceTabs = tabs
           // 中间定位板块接收
@@ -73,13 +69,14 @@ export default {
     setState() {
       var tabsArray = this.$refs['tabs'].$el.getElementsByClassName('el-tabs__item')
       for (let i = 0; i < tabsArray.length; i++) {
-        if (this.deviceTabs[i].state === 'on') {
-          tabsArray[i].classList.add('on')
-        }
+        tabsArray[i].classList.remove('on')
+        tabsArray[i].classList.add(this.deviceTabs[i].state)
       }
     },
     handleClick(tab) {
-      this.setState()
+      this.$nextTick(() => {
+        this.setState()
+      });
       // 中间定位板块接收
       bus.$emit('checkedDevice', tab.name)
       // 图表接收
