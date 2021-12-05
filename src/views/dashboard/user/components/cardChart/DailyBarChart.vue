@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import { getDayConsumption } from '@/api/electricity.js'
 import * as echarts from 'echarts'
 import resize from '../mixins/resize'
 
@@ -27,8 +28,8 @@ export default {
   data() {
     return {
       chart: null,
-      todayCsp: 13,
-      samedayCsp: 35,
+      todayCsp: 0,
+      yesterdayCsp: 0,
       flag: 'daily'
     }
   },
@@ -36,6 +37,7 @@ export default {
     this.$nextTick(() => {
       this.initChart()
     })
+    this.getDayCsp()
   },
   beforeDestroy() {
     if (!this.chart) {
@@ -45,6 +47,15 @@ export default {
     this.chart = null
   },
   methods: {
+    getDayCsp() {
+      getDayConsumption().then(response => {
+        console.log(response);
+        let cData = response.data
+        this.todayCsp = cData.substring(0, cData.indexOf(','))
+        this.yesterdayCsp = cData.substring(cData.indexOf(',') + 1)
+        this.initChart()
+      })
+    },
     initChart() {
       this.chart = echarts.init(this.$el)
       this.chart.setOption({
@@ -79,7 +90,7 @@ export default {
           }
         },
         legend: {
-          data: ['今日', '同期'],
+          data: ['今日', '昨日'],
           orient: 'vertical',
           right: 10,
           bottom: 8,
@@ -145,9 +156,9 @@ export default {
             animationDuration: 2000
           },
           {
-            name: '同期',
+            name: '昨日',
             type: 'bar',
-            data: [this.samedayCsp],
+            data: [this.yesterdayCsp],
             showBackground: true,
             itemStyle: {
               borderRadius: [0, 10, 10, 0],

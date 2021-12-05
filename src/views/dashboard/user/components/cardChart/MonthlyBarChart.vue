@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import { getMonthConsumption } from '@/api/electricity.js'
 import * as echarts from 'echarts'
 import resize from '../mixins/resize'
 
@@ -27,24 +28,16 @@ export default {
   data() {
     return {
       chart: null,
-      currentCsp: 125,
-      lastCsp: 148,
+      currentCsp: 0,
+      lastCsp: 0,
       flag: 'monthly'
     }
   },
-  mounted() {
+  activated() {
+    this.getMonthCsp()
     this.$nextTick(() => {
       this.initChart()
     })
-    // window.onresize = () => {
-    //   return (() => {
-    //     this.chart.resize()
-    //   })()
-    // }
-    // window.addEventListener('resize', () => {
-    //   this.chart.resize()
-    // })
-    // this.watchSize()
   },
   beforeDestroy() {
     if (!this.chart) {
@@ -54,6 +47,14 @@ export default {
     this.chart = null
   },
   methods: {
+    getMonthCsp() {
+      getMonthConsumption().then(response => {
+        let cData = response.data
+        this.currentCsp = cData.substring(0, cData.indexOf(','))
+        this.lastCsp = cData.substring(cData.indexOf(',') + 1)
+        this.initChart()
+      })
+    },
     initChart() {
       this.chart = echarts.init(this.$el)
       this.chart.setOption({
