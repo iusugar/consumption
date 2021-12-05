@@ -8,7 +8,7 @@
                 justify="center"
                 align="middle">
           <!-- <el-col :span="10"> -->
-            <el-input placeholder="请输入查询内容"
+            <!-- <el-input placeholder="请输入查询内容"
                       size="mini"
                       v-model="content"
                       class="input-with-select hidden-xs-only">
@@ -22,7 +22,7 @@
               </el-select>
               <el-button slot="append"
                          icon="el-icon-search"></el-button>
-            </el-input>
+            </el-input> -->
           <!-- </el-col> -->
         </el-row>
       </el-col>

@@ -14,7 +14,7 @@
               :sm="24"
               :md="24"
               :lg="12">
-        <div class="Usage-record"></div>
+        <div class="Usage-history"></div>
       </el-col>
     </el-row>
     <el-row>
@@ -82,11 +82,11 @@ export default {
       background-color: #ffffffaa;
       box-shadow: 0 2px 5px #00000015;
     }
-    .Usage-record {
+    .Usage-history {
       width: 100%;
       height: 300px;
       margin-bottom: 20px;
-      background-color: #5c5c5caa;
+      background-color: #ffffffaa;
       box-shadow: 0 2px 5px #00000015;
     }
   }

@@ -8,7 +8,7 @@
 import * as echarts from 'echarts'
 import resize from '@/views/dashboard/user/components/mixins/resize'
 import bus from '@/utils/bus.js'
-import { fetchYesterdayData } from '@/api/location.js'
+import { fetchYesterdayData } from '@/api/electricity.js'
 
 export default {
   mixins: [resize],

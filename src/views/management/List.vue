@@ -57,9 +57,10 @@
                  @click="getDeviceByQuery">
         查找
       </el-button>
-      <el-button class="filter-item search-btn"
+      <el-button class="filter-item refresh-btn"
                  type="success"
-                 icon="el-icon-refresh">
+                 icon="el-icon-refresh"
+                 @click="refreshDevice">
         刷新
       </el-button>
     </div>
@@ -96,11 +97,14 @@
                          align="center"
                          width="200">
         </el-table-column>
-        <el-table-column label="状态"
+        <el-table-column prop="state"
+                         label="状态"
                          align="center"
-                         width="80">
-          <template>
-            <el-tag type="success">ON</el-tag>
+                         width="100">
+          <template slot-scope="scope">
+            <el-tag :type="scope.row.state === 'ON' ? 'success' : 'danger'"
+                    class="state-tag"
+                    @click="clickItemInfo(scope.$index, scope.row,scope.column,scope.row.id)">{{scope.row.state}}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="power"
@@ -125,9 +129,17 @@
             <el-button size="mini"
                        type="primary"
                        @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button size="mini"
-                       type="danger"
-                       @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+            <el-popconfirm confirm-button-text='确定'
+                           cancel-button-text='再想想'
+                           icon="el-icon-info"
+                           icon-color="red"
+                           title="确定删除吗？"
+                           @confirm="handleDelete(scope.$index, scope.row)">
+              <el-button size="mini"
+                         type="danger"
+                         slot="reference">删除</el-button>
+            </el-popconfirm>
+
           </template>
         </el-table-column>
       </el-table>
@@ -204,19 +216,7 @@
               </el-form-item>
             </el-col>
           </el-form-item>
-
         </el-row>
-
-        <!-- <el-form-item label="活动区域"
-                      :label-width="formLabelWidth">
-          <el-select v-model="form.region"
-                     placeholder="请选择活动区域">
-            <el-option label="区域一"
-                       value="shanghai"></el-option>
-            <el-option label="区域二"
-                       value="beijing"></el-option>
-          </el-select>
-        </el-form-item> -->
       </el-form>
       <div slot="footer"
            class="dialog-footer">
@@ -229,7 +229,7 @@
 </template>
 
 <script>
-import { fetchAllDevice, fetchDeviceList, updateDevice } from '@/api/device.js'
+import { fetchAllDevice, fetchDeviceList, updateDevice, deleteDevice } from '@/api/device.js'
 import { fetchAllRoom } from '@/api/room.js'
 import buildingArray from '@/assets/json/building.json'
 import roomArray from '@/assets/json/room.json'
@@ -260,7 +260,7 @@ export default {
       ],
       // 分页展示数据
       pageData: [],
-      percentage: 61,
+      percentage: 66,
       colors: [
         { color: '#f56c6c', percentage: 20 },
         { color: '#e6a23c', percentage: 40 },
@@ -323,7 +323,9 @@ export default {
           device['bNum'] = data.buildNum
           device['rNum'] = data.roomNum
           device['location'] = data.location
+          device['state'] = data.currentState ? 'ON' : 'OFF'
           addTableData.push(device)
+          // 搜索框自动补全设备ID
           this.alternateDeviceNum.push(data.deviceId)
         }
         this.tableData = addTableData
@@ -342,6 +344,7 @@ export default {
       fetchDeviceList(this.queryList).then(response => {
         this.tableLoading = false
         this.allDeviceDataList = response.data
+        console.log(response.data);
         var addTableData = []
         for (let data of this.allDeviceDataList) {
           let device = {}
@@ -351,18 +354,21 @@ export default {
           device['bNum'] = data.buildNum
           device['rNum'] = data.roomNum
           device['location'] = data.location
+          device['state'] = data.currentState ? 'ON' : 'OFF'
           addTableData.push(device)
-          this.alternateDeviceNum.push(data.deviceId)
+          // 搜索框自动补全设备ID
+          // this.alternateDeviceNum.push(data.deviceId)
         }
         this.tableData = addTableData
         this.pageData = this.tableData.slice(0, this.pageSize)
-        // this.list = this.alternateDeviceNum.map(item => {
-        //   return { value: `${item}`, label: `${item}` };
-        // });
       }).catch(error => {
         this.tableLoading = false
         console.log(error);
       })
+    },
+    refreshDevice() {
+      this.queryList = {}
+      this.getDeviceByQuery()
     },
     remoteMethod(query) {
       if (query !== '') {
@@ -382,7 +388,6 @@ export default {
       fetchAllRoom()
         .then(response => {
           this.roomData = response.data
-          console.log(this.roomData);
           let buildingArray = []
           for (let o of this.roomData) {
             let building = []
@@ -423,6 +428,21 @@ export default {
     },
     handleDelete(index, row) {
       console.log(index, row);
+      deleteDevice(row.deviceId).then(response => {
+        if (response.data === 'success') {
+          this.refreshDevice()
+          this.$notify({
+            title: '成功',
+            message: '删除成功',
+            type: 'success'
+          })
+        } else {
+          this.$message({
+            message: '删除失败',
+            type: 'error'
+          })
+        }
+      })
     },
     handleCurrentChange(current) {
       this.pageData = this.tableData.slice((current - 1) * this.pageSize, (current - 1) * this.pageSize + this.pageSize)
@@ -431,12 +451,33 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           updateDevice(this.dialogForm).then(response => {
-            console.log(response.data);
+            let res = response.data
+            if (res === 'same') {
+              this.$message({
+                message: '信息相同未做更改',
+                type: 'warning'
+              })
+            } else if (res === 'success') {
+              this.$notify({
+                title: '成功',
+                message: '更新成功',
+                type: 'success'
+              });
+              this.getDeviceByQuery()
+              this.dialogFormVisible = false
+            }
           })
         } else {
           alert('校验不通过')
         }
       })
+    },
+    // el-tag的click方法用来调试 无实际用途
+    clickItemInfo(e1, e2, e3, e4) {
+      console.log(e1)
+      console.log(e2);
+      console.log(e3);
+      console.log(e4);
     }
   }
 }
@@ -462,6 +503,7 @@ export default {
     }
   }
   .table-container {
+    min-height: 300px;
     position: relative;
     .el-table {
       width: 100%;
