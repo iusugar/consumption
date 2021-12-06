@@ -312,14 +312,13 @@ export default {
     getAllDevice() {
       this.deviceNumList = []
       fetchAllDevice().then(response => {
-        this.tableLoading = false
         this.allDeviceDataList = response.data
         var addTableData = []
         for (let data of this.allDeviceDataList) {
           let device = {}
           device['deviceId'] = data.deviceId
-          let strDate = new Date(Date.parse(data.createTime)).toLocaleString('chinese', { hour12: false })
-          device['addDate'] = strDate.replace(/\//g, '-')
+          let strDate = new Date(Date.parse(data.createTime)).toLocaleString('chinese', { hour12: false }).replace(/\//g, '-')
+          device['addDate'] = strDate
           device['bNum'] = data.buildNum
           device['rNum'] = data.roomNum
           device['location'] = data.location
@@ -332,7 +331,8 @@ export default {
         this.pageData = this.tableData.slice(0, this.pageSize)
         this.list = this.alternateDeviceNum.map(item => {
           return { value: `${item}`, label: `${item}` };
-        });
+        })
+        setTimeout(() => { this.tableLoading = false }, 500)
       }).catch(error => {
         this.tableLoading = false
         console.log(error);
@@ -342,9 +342,7 @@ export default {
       this.deviceNumList = []
       this.tableLoading = true
       fetchDeviceList(this.queryList).then(response => {
-        this.tableLoading = false
         this.allDeviceDataList = response.data
-        console.log(response.data);
         var addTableData = []
         for (let data of this.allDeviceDataList) {
           let device = {}
@@ -361,6 +359,7 @@ export default {
         }
         this.tableData = addTableData
         this.pageData = this.tableData.slice(0, this.pageSize)
+        setTimeout(() => { this.tableLoading = false }, 500)
       }).catch(error => {
         this.tableLoading = false
         console.log(error);
@@ -468,7 +467,10 @@ export default {
             }
           })
         } else {
-          alert('校验不通过')
+          this.$message({
+            message: '请检查内容',
+            type: 'error'
+          })
         }
       })
     },

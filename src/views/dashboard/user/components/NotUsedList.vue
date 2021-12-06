@@ -1,6 +1,6 @@
 <!-- 长时间没用插座的通知列表 -->
 <template>
-  <div>
+  <div class="NotUsedList-container">
     <el-table :data="tableData"
               style="width: 100%"
               :stripe="true"
@@ -13,7 +13,7 @@
       </el-table-column>
       <el-table-column prop="number"
                        label="编号"
-                       width="180">
+                       width="250">
       </el-table-column>
       <el-table-column prop="location"
                        label="位置"
@@ -24,6 +24,8 @@
 </template>
 
 <script>
+import { fetchLastUseTime } from '@/api/status.js'
+
 export default {
   data() {
     return {
@@ -35,18 +37,26 @@ export default {
         date: '2018-05-04 09:08:22',
         number: 'A2F5502',
         location: 'A2教学楼5楼502'
-      }, {
-        date: '2019-05-01 14:23:25',
-        number: 'A1F2223',
-        location: 'A1教学楼2楼223'
-      }, {
-        date: '2019-10-01 14:23:25',
-        number: 'A1F2223',
-        location: 'A1教学楼2楼223'
       }]
     }
   },
+  activated() {
+    this.getDeviceLastUseTime()
+  },
   methods: {
+    getDeviceLastUseTime() {
+      fetchLastUseTime().then(response => {
+        console.log(response)
+        var dataList = response.data
+        var deviceData = []
+        for (let data of dataList) {
+          let formatDate = new Date(Date.parse(data.lastUseTime)).toLocaleString('chinese', { hour12: false }).replace(/\//g, '-')
+          let formatLocation = data.roomNum + data.location
+          deviceData.push({ 'date': formatDate, 'number': data.deviceId, 'location': formatLocation })
+        }
+        this.tableData = deviceData
+      })
+    },
     tableRowClassName({ row, rowIndex }) {
       if (rowIndex % 2 !== 0) {
         return 'warning-row';
@@ -57,6 +67,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.NotUsedList-container {
+  height: 350px;
+}
 .el-table .warning-row {
   // background: rgba($color: #336699, $alpha: 0.1);
 }

@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { getDayConsumption } from '@/api/electricity.js'
+import { fetchDayConsumption } from '@/api/electricity.js'
 import * as echarts from 'echarts'
 import resize from '../mixins/resize'
 
@@ -48,8 +48,7 @@ export default {
   },
   methods: {
     getDayCsp() {
-      getDayConsumption().then(response => {
-        console.log(response);
+      fetchDayConsumption().then(response => {
         let cData = response.data
         this.todayCsp = cData.substring(0, cData.indexOf(','))
         this.yesterdayCsp = cData.substring(cData.indexOf(',') + 1)

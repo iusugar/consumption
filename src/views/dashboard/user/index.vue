@@ -69,6 +69,7 @@ export default {
 <style scoped>
 .dashboard-container {
   padding: 20px;
+  text-align: center;
 }
 .chart-wrapper {
   background: #fff;
@@ -91,7 +92,5 @@ export default {
   margin-bottom: 32px;
   box-shadow: 1px 1px 15px #ddd;
 }
-.online-list {
-  padding: 10px 10px 0 10px;
-}
+
 </style>

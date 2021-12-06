@@ -1,6 +1,6 @@
 <!-- 插座通电时的通知列表 -->
 <template>
-  <div class="block">
+  <div class="timeline-container">
     <el-timeline>
       <el-timeline-item v-for="(activity, index) in activities"
                         :key="index"
@@ -27,19 +27,6 @@ export default {
       }, {
         content: '插座A2-302下线',
         timestamp: '2021-10-08 20:46'
-      }, {
-        content: '插座A2-102下线',
-        timestamp: '2021-10-03 10:40'
-      }, {
-        content: '插座A3-303上线',
-        timestamp: '2021-10-02 20:46',
-        size: 'large',
-        color: '#0bbd87'
-      }, {
-        content: '插座A1-222上线',
-        timestamp: '2021-10-02 10:02',
-        size: 'large',
-        color: '#0bbd87'
       }]
     };
   }
@@ -47,6 +34,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.timeline-container {
+  height: 350px;
+  box-sizing: border-box;
+  padding: 20px 10px;
+}
 .el-timeline {
   text-align: left;
 }

@@ -23,16 +23,30 @@ export function getLastMonthConsumption() {
   })
 }
 // 结合上面两个
-export function getMonthConsumption() {
+export function fetchMonthConsumption() {
   return request({
     url: '/electricityData/getMonthC',
     method: 'get'
   })
 }
 // 获取今日用电和昨日用电
-export function getDayConsumption() {
+export function fetchDayConsumption() {
   return request({
     url: '/electricityData/getDayC',
+    method: 'get'
+  })
+}
+// 获取一年的用电量(12个月)
+export function fetchYearConsumption() {
+  return request({
+    url: '/electricityData/getYearC',
+    method: 'get'
+  })
+}
+// 获取指定日期一天的功率变化
+export function fetchDayTotalPower() {
+  return request({
+    url: '/electricityData/getDayTotalPower',
     method: 'get'
   })
 }

@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { getMonthConsumption } from '@/api/electricity.js'
+import { fetchMonthConsumption } from '@/api/electricity.js'
 import * as echarts from 'echarts'
 import resize from '../mixins/resize'
 
@@ -48,7 +48,7 @@ export default {
   },
   methods: {
     getMonthCsp() {
-      getMonthConsumption().then(response => {
+      fetchMonthConsumption().then(response => {
         let cData = response.data
         this.currentCsp = cData.substring(0, cData.indexOf(','))
         this.lastCsp = cData.substring(cData.indexOf(',') + 1)

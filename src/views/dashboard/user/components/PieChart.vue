@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import { fetchYearConsumption } from '@/api/electricity.js'
 import * as echarts from 'echarts'
 import resize from './mixins/resize'
 
@@ -34,6 +35,7 @@ export default {
     this.$nextTick(() => {
       this.initChart()
     })
+    this.getYearConsumption()
   },
   beforeDestroy() {
     if (!this.chart) {
@@ -43,6 +45,12 @@ export default {
     this.chart = null
   },
   methods: {
+    getYearConsumption() {
+      fetchYearConsumption().then(response => {
+        this.consumption = response.data
+        // this.initChart()
+      })
+    },
     initChart() {
       this.chart = echarts.init(this.$el)
       this.chart.setOption({

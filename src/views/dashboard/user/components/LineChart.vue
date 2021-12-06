@@ -1,10 +1,11 @@
-<!-- 昨日用电量分布图 -->
+<!-- 昨日用电功率分布图 -->
 <template>
   <div :class="className"
        :style="{width:width,height:height}"></div>
 </template>
 
 <script>
+import { fetchDayTotalPower } from '@/api/electricity.js'
 import * as echarts from 'echarts'
 import resize from './mixins/resize'
 
@@ -26,13 +27,15 @@ export default {
   },
   data() {
     return {
-      chart: null
+      chart: null,
+      powerData: []
     }
   },
-  mounted() {
+  activated() {
     this.$nextTick(() => {
       this.initChart()
     })
+    this.getDayTotalPower()
   },
   beforeDestroy() {
     if (!this.chart) {
@@ -42,6 +45,12 @@ export default {
     this.chart = null
   },
   methods: {
+    getDayTotalPower() {
+      fetchDayTotalPower().then(response => {
+        this.powerData = response.data
+        this.initChart()
+      })
+    },
     initChart() {
       this.chart = echarts.init(this.$el)
       this.chart.setOption({
@@ -90,14 +99,14 @@ export default {
             color: 'red'
           }, {
             gt: 7,
-            lte: 14,
+            lte: 17,
             color: 'green'
           }, {
-            gt: 14,
-            lte: 17,
+            gt: 17,
+            lte: 20,
             color: 'red'
           }, {
-            gt: 17,
+            gt: 20,
             color: 'green'
           }]
         },
@@ -106,7 +115,8 @@ export default {
             name: '用电功率',
             type: 'line',
             smooth: true,
-            data: [300, 280, 250, 260, 270, 300, 550, 500, 400, 390, 380, 390, 400, 500, 600, 750, 800, 700, 600, 400, 390, 480, 678, 560],
+            // data: [300, 280, 250, 260, 270, 300, 550, 500, 400, 390, 380, 390, 400, 500, 600, 750, 800, 700, 600, 400, 390, 480, 678, 560],
+            data: this.powerData,
             markArea: {
               itemStyle: {
                 color: 'rgba(255, 173, 177, 0.4)'
@@ -118,9 +128,9 @@ export default {
                 xAxis: '07:00'
               }], [{
                 name: '晚高峰',
-                xAxis: '14:00'
-              }, {
                 xAxis: '17:00'
+              }, {
+                xAxis: '20:00'
               }]]
             },
             animationEasing: 'cubicInOut',
