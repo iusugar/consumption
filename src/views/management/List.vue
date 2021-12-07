@@ -530,9 +530,13 @@ export default {
   }
   /deep/ .el-dialog {
     .el-dialog__header {
+      padding: 10px 20px;
       background-color: rgb(31, 62, 102);
-      span,
-      i {
+      .el-dialog__headerbtn {
+        top: 10px !important;
+      }
+      span,i {
+        font-size: 14px;
         color: #fff;
       }
     }

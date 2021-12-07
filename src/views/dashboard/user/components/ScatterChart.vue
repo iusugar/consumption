@@ -1,4 +1,4 @@
-<!-- 昨日用电时间点散点图 -->
+<!-- @未用昨日用电时间点散点图 -->
 <template>
   <div :class="className"
        :style="{height:height,width:width}"></div>

@@ -1,7 +1,8 @@
 <!-- 昨日用电功率分布图 -->
 <template>
   <div :class="className"
-       :style="{width:width,height:height}"></div>
+       :style="{width:width,height:height}">
+  </div>
 </template>
 
 <script>

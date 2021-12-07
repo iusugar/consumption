@@ -29,15 +29,7 @@ import { fetchLastUseTime } from '@/api/status.js'
 export default {
   data() {
     return {
-      tableData: [{
-        date: '2018-05-02 10:20:05',
-        number: 'A2F5510',
-        location: 'A2教学楼5楼510'
-      }, {
-        date: '2018-05-04 09:08:22',
-        number: 'A2F5502',
-        location: 'A2教学楼5楼502'
-      }]
+      tableData: []
     }
   },
   activated() {
@@ -46,12 +38,11 @@ export default {
   methods: {
     getDeviceLastUseTime() {
       fetchLastUseTime().then(response => {
-        console.log(response)
         var dataList = response.data
         var deviceData = []
         for (let data of dataList) {
           let formatDate = new Date(Date.parse(data.lastUseTime)).toLocaleString('chinese', { hour12: false }).replace(/\//g, '-')
-          let formatLocation = data.roomNum + data.location
+          let formatLocation = data.roomNum + '-' + data.location
           deviceData.push({ 'date': formatDate, 'number': data.deviceId, 'location': formatLocation })
         }
         this.tableData = deviceData

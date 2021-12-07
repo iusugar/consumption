@@ -48,7 +48,7 @@ export default {
     getYearConsumption() {
       fetchYearConsumption().then(response => {
         this.consumption = response.data
-        // this.initChart()
+        this.initChart()
       })
     },
     initChart() {

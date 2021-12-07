@@ -1,4 +1,4 @@
-<!-- 七日用电量统计 -->
+<!-- 一周用电最多的插座统计 -->
 <template>
   <div :class="className"
        :style="{wdith:width,height:height}"></div>
@@ -76,7 +76,7 @@ export default {
         },
         xAxis: {
           type: 'category',
-          data: ['插座1', '插座2', '插座3', '插座4', '插座5', '插座6', '插座7', '插座8'],
+          data: ['插座1', '插座2', '插座3', '插座4', '插座5', '插座6'],
           // boundaryGap: false,
           axisLine: {
             show: false
@@ -105,7 +105,6 @@ export default {
           {
             data: [
               {
-                name: 's1',
                 value: 521,
                 itemStyle: {
                   color: '#5470c6'
@@ -137,18 +136,6 @@ export default {
               },
               {
                 value: 490,
-                itemStyle: {
-                  color: '#5470c6'
-                }
-              },
-              {
-                value: 770,
-                itemStyle: {
-                  color: '#5470c6'
-                }
-              },
-              {
-                value: 549,
                 itemStyle: {
                   color: '#5470c6'
                 }
