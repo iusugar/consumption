@@ -57,6 +57,7 @@ export default {
           if (r.pid != null) {
             let room = {}
             room['number'] = r.name
+            room['type'] = r.description
             rooms.push(room)
           }
         }

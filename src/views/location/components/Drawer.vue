@@ -33,7 +33,8 @@
               <div class="type">{{room.type}}</div>
             </el-col>
             <el-col :span="10"
-                    class="quantity">{{room.quantity}}个</el-col>
+                    class="quantity">{{room.quantity}}个
+            </el-col>
           </el-row>
         </el-scrollbar>
       </div>
@@ -42,6 +43,7 @@
 </template>
 
 <script>
+import { fetchDevice } from '@/api/device.js'
 import bus from '@/utils/bus.js'
 
 export default {
@@ -61,8 +63,9 @@ export default {
   methods: {
     getRoomList() {
       bus.$on('allRoomList', e => {
+        // console.log(e);
         this.allRoomList = e.sort((a, b) => { return a.number.localeCompare(b.number) })
-        this.loading = false
+        setTimeout(() => { this.loading = false }, 500)
       })
       bus.$on('checkedBuilding', e => {
         let rooms = []
@@ -70,7 +73,9 @@ export default {
           for (let r of this.allRoomList) {
             let subRoom = r.number.slice(0, r.number.indexOf('-'))
             if (subRoom === e) {
-              rooms.push({ number: r.number })
+              fetchDevice(r.number).then(response => {
+                rooms.push({ 'number': r.number, 'type': r.type, 'quantity': response.data.length })
+              })
             }
           }
         }

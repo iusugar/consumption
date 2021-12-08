@@ -58,7 +58,6 @@ export default {
       bus.$on('checkedDevice', e => {
         // console.log(e);
         if (this.locationList != null && this.locationList.length > 0) {
-          console.log(this.locationList[e]);
           this.location = this.locationList[e].roomNum + '-' + this.locationList[e].location;
         }
       })
