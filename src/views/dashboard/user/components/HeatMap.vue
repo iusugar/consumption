@@ -51,6 +51,8 @@ export default {
       fetchWeekOnlineNumber().then(response => {
         this.onlineDeviceData = response.data
         this.initChart()
+        // 点击事件
+        this.chart.on('click', (el) => { console.log(el); })
       })
     },
     initChart() {
