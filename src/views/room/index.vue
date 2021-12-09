@@ -2,16 +2,18 @@
 <template>
   <div class="app-container">
     <div class="title">
-      <span>选择楼号添加房间</span>
+      <span>空间位置</span>
     </div>
-    <transfer />
+    <!-- <transfer /> -->
+    <tree />
   </div>
 </template>
 
 <script>
 import Transfer from './components/Transfer.vue'
+import Tree from './components/Tree.vue'
 export default {
-  components: { Transfer },
+  components: { Transfer, Tree },
   data() {
     return {
     }
@@ -28,7 +30,8 @@ export default {
   box-sizing: border-box;
   .title {
     padding: 20px;
-    color: #337ab7;
+    color: #336699;
+    font-weight: 600;
     font-size: 14px;
     background: #f5f7fa;
   }

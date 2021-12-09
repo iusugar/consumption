@@ -67,15 +67,20 @@ export default {
         this.allRoomList = e.sort((a, b) => { return a.number.localeCompare(b.number) })
         setTimeout(() => { this.loading = false }, 500)
       })
-      bus.$on('checkedBuilding', e => {
+      bus.$on('checkedBuilding', async e => {
         let rooms = []
         if (this.allRoomList != null && this.allRoomList.length > 0) {
           for (let r of this.allRoomList) {
             let subRoom = r.number.slice(0, r.number.indexOf('-'))
             if (subRoom === e) {
-              fetchDevice(r.number).then(response => {
-                rooms.push({ 'number': r.number, 'type': r.type, 'quantity': response.data.length })
+              // this.getDevice(r.number)
+              let quantity = 0
+              await fetchDevice(r.number).then(response => {
+                quantity = response.data.length
               })
+              rooms.push({ 'number': r.number, 'type': r.type, 'quantity': quantity })
+              // console.log('打印rooms');
+              // console.log(rooms);
             }
           }
         }
@@ -88,6 +93,14 @@ export default {
           bus.$emit('checkedRoom', this.roomList[this.roomActiveIndex].number)
         }
       })
+    },
+    // 用来获取插座数量 需要异步执行 不然会出现数量都为0的情况
+    async getDevice(number) {
+      let quantity = 0
+      await fetchDevice(number).then(response => {
+        quantity = response.data.length
+      })
+      return quantity
     },
     openDrawer() {
       this.drawer = true

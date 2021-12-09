@@ -149,7 +149,7 @@
                      layout="prev, pager, next"
                      :total="this.tableData.length"
                      :page-size="pageSize"
-                     :current-page="currentPage"
+                     :current-page.sync="currentPage"
                      @current-change="handleCurrentChange">
       </el-pagination>
     </div>
@@ -309,6 +309,7 @@ export default {
     this.getAllRoom()
   },
   methods: {
+    // 初始化数据 获取全部
     getAllDevice() {
       this.deviceNumList = []
       fetchAllDevice().then(response => {
@@ -368,6 +369,7 @@ export default {
     refreshDevice() {
       this.queryList = {}
       this.getDeviceByQuery()
+      this.currentPage = 1
     },
     remoteMethod(query) {
       if (query !== '') {
@@ -383,6 +385,7 @@ export default {
         this.deviceNumList = [];
       }
     },
+    // 修改数据使用
     getAllRoom() {
       fetchAllRoom()
         .then(response => {
