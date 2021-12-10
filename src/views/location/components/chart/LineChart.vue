@@ -37,7 +37,7 @@ export default {
   updated() {
     this.initChart()
   },
-  mounted() {
+  activated() {
     this.getElectricityData()
     this.$nextTick(() => {
       this.initChart()

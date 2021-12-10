@@ -1,87 +1,207 @@
 <!-- 树形控件展示空间位置 -->
 <template>
   <div class="room-tree-container">
+    <el-input placeholder="输入关键字进行过滤"
+              v-model="filterText">
+    </el-input>
     <el-tree :data="roomData"
+             v-loading="treeLoading"
+             ref="tree"
+             node-key="id"
              :props="defaultProps"
              show-checkbox
-             @node-click="handleNodeClick"></el-tree>
+             :filter-node-method="filterNode"
+             @node-click="handleNodeClick"
+             @check-change="handleCheckChange">
+    </el-tree>
+    <div class="button-group">
+      <el-button @click="getCheckedNodes">操作选择项</el-button>
+      <el-button @click="addNewNodes">添加新位置</el-button>
+      <el-button @click="resetChecked">清空选择</el-button>
+    </div>
+    <!-- 添加新位置表单 -->
+    <el-dialog title="添加新的位置"
+               class="add-dialog"
+               :visible.sync="dialogFormVisible">
+      <el-form :model="addNewForm"
+               label-position="left">
+        <el-form-item label="楼号"
+                      label-width="80px">
+          <el-select v-model="addNewForm.checkedBuilding"
+                     filterable
+                     allow-create
+                     clearable
+                     placeholder="请选择楼号或手动输入">
+            <el-option v-for="item in buildingOptions"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value">
+            </el-option>
+          </el-select>
+          <el-input style="width: 200px"
+                    placeholder="请输入对添加楼的说明"
+                    v-model="addNewForm.roomDesc">
+          </el-input>
+        </el-form-item>
+        <el-form-item label="门牌号"
+                      label-width="80px">
+          <el-select v-model="addNewForm.checkedRoom"
+                     filterable
+                     allow-create
+                     clearable
+                     placeholder="请选择门牌号或手动输入">
+            <el-option v-for="item in roomOptions"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value">
+            </el-option>
+          </el-select>
+          <el-input style="width: 200px"
+                    placeholder="请输入对房间的说明"
+                    v-model="addNewForm.roomDesc">
+          </el-input>
+        </el-form-item>
+        <el-form-item label="具体位置"
+                      label-width="80px">
+          <el-input v-model="addNewForm.location"
+                    placeholder="请输入具体位置"
+                    clearable
+                    autocomplete="off"
+                    style="width:250px">
+          </el-input>
+          <el-input style="width: 200px"
+                    placeholder="请输入对位置的说明"
+                    v-model="addNewForm.roomDesc">
+          </el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer"
+           class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary"
+                   @click="dialogFormVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import {fetchAllRoom} from '@/api/room.js'
+import { fetchAllRoom } from '@/api/room.js'
+import { fetchAllLocation } from '@/api/location.js'
 
 export default {
   data() {
     return {
-      roomData: [{
-        label: 'A1',
-        children: [{
-          label: 'A1-101'
-        }]
-      }, {
-        label: 'B1',
-        children: [{
-          label: 'B1-202',
-          children: [{
-            label: '3号桌'
-          }]
-        }, {
-          label: 'B1-302',
-          children: [{
-            label: '6号桌'
-          }]
-        }]
-      }],
+      treeLoading: 'true',
+      roomData: [],
       defaultProps: {
         children: 'children',
         label: 'label'
-      }
-    };
+      },
+      filterText: '',
+      dialogFormVisible: false,
+      addNewForm: {
+        checkedBuilding: '',
+        buildingDesc: '',
+        checkedRoom: '',
+        roomDesc: '',
+        location: '',
+        locationDesc: ''
+      },
+      buildingOptions: [
+        { 'label': 'A1', 'value': 'A1' },
+        { 'label': 'A2', 'value': 'A2' }
+      ],
+      roomOptions: [
+        { 'label': 'A1-101', 'value': 'A1-101' }
+      ]
+    }
+  },
+  watch: {
+    filterText(val) {
+      this.$refs.tree.filter(val);
+    }
   },
   activated() {
     this.getAllRoom()
   },
   methods: {
-    getAllRoom() {
-      var setRoomData = []
+    async getAllRoom() {
+      var setData = []
       var allRoomData;
+      var allLocationData;
       // var building = {}
       // var room = {}
-      fetchAllRoom().then(response => {
-        allRoomData = this.response.data
-        console.log(response.data);
-        let buildingNumList = []
-        let roomNumList = []
-        for (let data of response.data) {
-          if (data.pid == null || data.pid === '') {
-            buildingNumList.push({id: data.id, number: data.name})
-          } else {
-            roomNumList.push({id: data.id, number: data.name, pId: data.pid})
-          }
+      setTimeout(() => {
+        this.treeLoading = false
+      }, 300);
+      await fetchAllRoom().then(response => {
+        allRoomData = response.data
+        // console.log(response.data);
+      })
+      await fetchAllLocation().then(response => {
+        allLocationData = response.data
+      })
+      allLocationData = allLocationData.sort((a, b) => { return a.position.localeCompare(b.position) })
+      let buildingNumList = []
+      let roomNumList = []
+      for (let data of allRoomData) {
+        if (data.pid == null || data.pid === '') {
+          buildingNumList.push({ id: data.id, number: data.name })
+        } else {
+          roomNumList.push({ id: data.id, number: data.name, pId: data.pid })
         }
-        buildingNumList = buildingNumList.sort((a, b) => { return a.number.localeCompare(b.number) })
-        roomNumList = roomNumList.sort((a, b) => { return a.number.localeCompare(b.number) })
-        for (let b of buildingNumList) {
-          let building = {}
-          let bChildren = []
-          building['label'] = b.number
-          for (let r of roomNumList) {
-            if (b.id === r.pId) {
-              let room = {}
-              let rChildren = []
-              room['label'] = r.number
-              bChildren.push(room)
-              building['children'] = bChildren
+      }
+      buildingNumList = buildingNumList.sort((a, b) => { return a.number.localeCompare(b.number) })
+      roomNumList = roomNumList.sort((a, b) => { return a.number.localeCompare(b.number) })
+      for (let b of buildingNumList) {
+        let building = {}
+        let bChildren = []
+        building['id'] = b.id
+        building['label'] = b.number
+        for (let r of roomNumList) {
+          if (b.id === r.pId) {
+            let room = {}
+            let rChildren = []
+            room['id'] = r.id
+            room['label'] = r.number
+            bChildren.push(room)
+            // building['children'] = bChildren
+            for (let loc of allLocationData) {
+              if (loc.roomId === r.id) {
+                let location = {}
+                location['id'] = loc.id
+                location['label'] = loc.position
+                rChildren.push(location)
+                room['children'] = rChildren
+                building['children'] = bChildren
+              }
             }
           }
-          setRoomData.push(building)
         }
-        this.roomData = setRoomData
-      })
+        setData.push(building)
+      }
+      this.roomData = setData
+    },
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.label.indexOf(value) !== -1;
+    },
+    handleCheckChange(data, checked, indeterminate) {
+      console.log(data, checked, indeterminate);
     },
     handleNodeClick(data) {
       console.log(data);
+    },
+    // 对树的操作
+    getCheckedNodes() {
+      console.log(this.$refs.tree.getCheckedNodes());
+    },
+    addNewNodes() {
+      this.dialogFormVisible = true
+    },
+    resetChecked() {
+      this.$refs.tree.setCheckedKeys([]);
     }
   }
 }
@@ -89,6 +209,25 @@ export default {
 
 <style lang="scss" scoped>
 .room-tree-container {
+  width: 100%;
+  min-height: calc(100vh - 50px);
   padding: 20px 30px;
+  /deep/ .el-tree {
+    .el-tree-node__content {
+      height: 30px;
+      span {
+        font-size: 14px;
+      }
+    }
+  }
+  .button-group {
+    padding: 30px 20px;
+  }
+  /deep/ .el-dialog {
+    min-width: 400px;
+    .el-dialog__footer {
+      text-align: center;
+    }
+  }
 }
 </style>

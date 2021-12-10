@@ -42,7 +42,7 @@ export default {
       devId: ''
     }
   },
-  mounted() {
+  activated() {
     this.getPosition()
   },
   methods: {

@@ -92,14 +92,14 @@ export default {
           show: false,
           dimension: 0,
           pieces: [{
-            lte: 5,
+            lte: 7,
             color: 'green'
           }, {
-            gt: 5,
-            lte: 7,
+            gt: 7,
+            lte: 9,
             color: 'red'
           }, {
-            gt: 7,
+            gt: 9,
             lte: 17,
             color: 'green'
           }, {
@@ -124,9 +124,9 @@ export default {
               },
               data: [[{
                 name: '早高峰',
-                xAxis: '05:00'
-              }, {
                 xAxis: '07:00'
+              }, {
+                xAxis: '09:00'
               }], [{
                 name: '晚高峰',
                 xAxis: '17:00'
