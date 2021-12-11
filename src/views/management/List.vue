@@ -294,13 +294,7 @@ export default {
       // dialog下拉框选项
       buildingOption: [],
       roomOption: [],
-      locationOption: [
-        { 'label': '1号桌', value: '1号桌' },
-        { 'label': '2号桌', value: '2号桌' },
-        { 'label': '3号桌', value: '3号桌' },
-        { 'label': '4号桌', value: '4号桌' },
-        { 'label': '5号桌', value: '5号桌' },
-        { 'label': '6号桌', value: '6号桌' }],
+      locationOption: [],
       roomData: []
     }
   },

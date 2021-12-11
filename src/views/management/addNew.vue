@@ -45,7 +45,7 @@
                             prop="buildNum">
                 <el-select v-model="ruleForm.buildNum"
                            placeholder="楼号"
-                           @change="buildingChange($event)">
+                           @change="buildingChange">
                   <el-option v-for="(option, index) in buildingOption"
                              :key="index"
                              :label="option.label"
@@ -58,7 +58,8 @@
               <el-form-item label="门牌号码"
                             prop="roomNum">
                 <el-select v-model="ruleForm.roomNum"
-                           placeholder="门牌号">
+                           placeholder="门牌号"
+                           @change="roomChange">
                   <el-option v-for="(option, index) in roomOption"
                              :key="index"
                              :label="option.label"
@@ -86,6 +87,7 @@
                 <el-input placeholder="请输入电压"
                           :value="220"
                           onkeyup="value=value.replace(/[^\d]/g,'')"
+                          @blur="ruleForm.ratedVoltage=$event.target.value"
                           v-model="ruleForm.ratedVoltage">
                   <i slot="prefix"
                      class="iconfont icon-dianya">
@@ -98,6 +100,7 @@
                             prop="ratedCurrent">
                 <el-input placeholder="请输入电流"
                           onkeyup="value=value.replace(/[^\d]/g,'')"
+                          @blur="ruleForm.ratedCurrent=$event.target.value"
                           v-model="ruleForm.ratedCurrent">
                   <i slot="prefix"
                      class="iconfont icon-dianliu">
@@ -110,6 +113,7 @@
                             prop="ratedPower">
                 <el-input placeholder="请输入功率"
                           onkeyup="value=value.replace(/[^\d]/g,'')"
+                          @blur="ruleForm.ratedPower=$event.target.value"
                           v-model="ruleForm.ratedPower">
                   <i slot="prefix"
                      class="iconfont icon-gongshuai">
@@ -127,7 +131,7 @@
                            class="all-checked-box">全选</el-checkbox>
 
               <el-checkbox-group v-model="ruleForm.checkedFunctions"
-                                 @change="handleCheckedCitiesChange">
+                                 @change="handleCheckedChange">
                 <el-checkbox v-for="item in ruleForm.deviceFunctions"
                              :label="item"
                              :key="item">{{item}}</el-checkbox>
@@ -153,6 +157,7 @@
 <script>
 import { addDevice, checkIsExist } from '@/api/device.js'
 import { fetchAllRoom } from '@/api/room.js'
+import { fetchLocationByRoom } from '@/api/location.js'
 
 export default {
   data() {
@@ -188,15 +193,10 @@ export default {
       },
       buildingOption: [],
       roomOption: [],
-      locationOption: [
-        { 'label': '1号桌', value: '1号桌' },
-        { 'label': '2号桌', value: '2号桌' },
-        { 'label': '3号桌', value: '3号桌' },
-        { 'label': '4号桌', value: '4号桌' },
-        { 'label': '5号桌', value: '5号桌' },
-        { 'label': '6号桌', value: '6号桌' }],
+      locationOption: [{ 'label': '2号桌', 'value': '2号桌' }],
       roomData: [],
-      checkedBuilding: ''
+      checkedBuilding: '',
+      checkedRoom: ''
     };
   },
   // mounted() {
@@ -222,7 +222,7 @@ export default {
       this.ruleForm.checkedFunctions = val ? this.ruleForm.deviceFunctions : [];
       this.ruleForm.isIndeterminate = false;
     },
-    handleCheckedCitiesChange(value) {
+    handleCheckedChange(value) {
       let checkedCount = value.length;
       this.ruleForm.checkAll = checkedCount === this.ruleForm.deviceFunctions.length;
       this.ruleForm.isIndeterminate = checkedCount > 0 && checkedCount < this.ruleForm.deviceFunctions.length;
@@ -254,7 +254,7 @@ export default {
         } else {
           this.$message({
             message: '请按要求填写完整',
-            type: 'error'
+            type: 'warning'
           });
           return false;
         }
@@ -263,11 +263,24 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields();
     },
+    roomChange(checked) {
+      this.ruleForm.location = '';
+      this.checkedRoom = checked;
+      fetchLocationByRoom(checked).then(response => {
+        let locationList = []
+        for (let loc of response.data) {
+          locationList.push({ 'label': loc.position, 'value': loc.position })
+        }
+        locationList = locationList.sort((a, b) => { return a.value.localeCompare(b.value) })
+        this.locationOption = locationList
+      })
+    },
     buildingChange(checked) {
       this.ruleForm.roomNum = ''
+      this.roomChange()
       this.checkedBuilding = checked;
       let id = 0;
-      let roomArray = []
+      let roomList = []
       for (let o of this.roomData) {
         if (checked === o.name) {
           id = o.id
@@ -277,25 +290,26 @@ export default {
         if (o.pid === id) {
           let room = {}
           room['label'] = room['value'] = o.name
-          roomArray.push(room)
+          roomList.push(room)
         }
       }
-      this.roomOption = roomArray
+      this.roomOption = roomList
     },
     getAllRoom() {
       fetchAllRoom()
         .then(response => {
           this.roomData = response.data
-          let buildingArray = []
+          this.roomData.sort((a, b) => { return a.name.localeCompare(b.name) })
+          let buildingList = []
           for (let o of this.roomData) {
             let building = []
             if (o.pid == null) {
               building['label'] = building['value'] = o.name
-              buildingArray.push(building)
+              buildingList.push(building)
             }
           }
-          this.buildingOption = buildingArray
-          this.buildingChange(this.checkedBuilding)
+          this.buildingOption = buildingList
+          // this.buildingChange(this.checkedBuilding)
           this.ruleForm.roomNum = ''
         })
     }

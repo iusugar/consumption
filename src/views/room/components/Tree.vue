@@ -24,33 +24,42 @@
                class="add-dialog"
                :visible.sync="dialogFormVisible">
       <el-form :model="addNewForm"
+               ref="addNewForm"
                label-position="left">
         <el-form-item label="楼号"
-                      label-width="80px">
+                      label-width="80px"
+                      prop="checkedBuilding"
+                      :rules="{required: true, message: '请选择或输入楼号', trigger: 'change'}">
           <el-select v-model="addNewForm.checkedBuilding"
                      filterable
                      allow-create
                      clearable
-                     placeholder="请选择楼号或手动输入">
-            <el-option v-for="item in buildingOptions"
+                     default-first-option
+                     placeholder="请选择楼号或手动输入"
+                     @change="buildingChange">
+            <el-option v-for="item in buildingOption"
                        :key="item.value"
                        :label="item.label"
                        :value="item.value">
             </el-option>
           </el-select>
           <el-input style="width: 200px"
+                    clearable
                     placeholder="请输入对添加楼的说明"
-                    v-model="addNewForm.roomDesc">
+                    v-model="addNewForm.buildingDesc">
           </el-input>
         </el-form-item>
         <el-form-item label="门牌号"
-                      label-width="80px">
+                      label-width="80px"
+                      prop="checkedRoom"
+                      :rules="{required: true, message: '请选择或输入门牌号', trigger: 'change'}">
           <el-select v-model="addNewForm.checkedRoom"
                      filterable
                      allow-create
                      clearable
+                     default-first-option
                      placeholder="请选择门牌号或手动输入">
-            <el-option v-for="item in roomOptions"
+            <el-option v-for="item in roomOption"
                        :key="item.value"
                        :label="item.label"
                        :value="item.value">
@@ -62,7 +71,9 @@
           </el-input>
         </el-form-item>
         <el-form-item label="具体位置"
-                      label-width="80px">
+                      label-width="80px"
+                      prop="location"
+                      :rules="{required: true, message: '请输入房间中的具体位置', trigger: 'change'}">
           <el-input v-model="addNewForm.location"
                     placeholder="请输入具体位置"
                     clearable
@@ -71,35 +82,39 @@
           </el-input>
           <el-input style="width: 200px"
                     placeholder="请输入对位置的说明"
-                    v-model="addNewForm.roomDesc">
+                    v-model="addNewForm.locationDesc">
           </el-input>
         </el-form-item>
       </el-form>
       <div slot="footer"
            class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button @click="dialogFormVisible=false">取 消</el-button>
         <el-button type="primary"
-                   @click="dialogFormVisible = false">确 定</el-button>
+                   @click="submitAddNewForm('addNewForm')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { fetchAllRoom } from '@/api/room.js'
+import { fetchAllRoom, addNewRoom } from '@/api/room.js'
 import { fetchAllLocation } from '@/api/location.js'
 
 export default {
   data() {
     return {
-      treeLoading: 'true',
+      treeLoading: true,
+      // 树数据
       roomData: [],
       defaultProps: {
         children: 'children',
         label: 'label'
       },
+      // 筛选树节点
       filterText: '',
+      // 添加新位置的容器是否可见
       dialogFormVisible: false,
+      // 添加新位置的表单
       addNewForm: {
         checkedBuilding: '',
         buildingDesc: '',
@@ -108,13 +123,14 @@ export default {
         location: '',
         locationDesc: ''
       },
-      buildingOptions: [
-        { 'label': 'A1', 'value': 'A1' },
-        { 'label': 'A2', 'value': 'A2' }
-      ],
-      roomOptions: [
+      // 表单楼号选项
+      buildingOption: [],
+      // 表单房间号选项
+      roomOption: [
         { 'label': 'A1-101', 'value': 'A1-101' }
-      ]
+      ],
+      allRoomData: [],
+      allLocationData: []
     }
   },
   watch: {
@@ -128,24 +144,22 @@ export default {
   methods: {
     async getAllRoom() {
       var setData = []
-      var allRoomData;
-      var allLocationData;
       // var building = {}
       // var room = {}
       setTimeout(() => {
         this.treeLoading = false
       }, 300);
       await fetchAllRoom().then(response => {
-        allRoomData = response.data
-        // console.log(response.data);
+        this.allRoomData = response.data
+        this.allRoomData.sort((a, b) => { return a.name.localeCompare(b.name) })
       })
       await fetchAllLocation().then(response => {
-        allLocationData = response.data
+        this.allLocationData = response.data
       })
-      allLocationData = allLocationData.sort((a, b) => { return a.position.localeCompare(b.position) })
+      this.allLocationData.sort((a, b) => { return a.position.localeCompare(b.position) })
       let buildingNumList = []
       let roomNumList = []
-      for (let data of allRoomData) {
+      for (let data of this.allRoomData) {
         if (data.pid == null || data.pid === '') {
           buildingNumList.push({ id: data.id, number: data.name })
         } else {
@@ -167,7 +181,7 @@ export default {
             room['label'] = r.number
             bChildren.push(room)
             // building['children'] = bChildren
-            for (let loc of allLocationData) {
+            for (let loc of this.allLocationData) {
               if (loc.roomId === r.id) {
                 let location = {}
                 location['id'] = loc.id
@@ -197,11 +211,52 @@ export default {
     getCheckedNodes() {
       console.log(this.$refs.tree.getCheckedNodes());
     },
-    addNewNodes() {
-      this.dialogFormVisible = true
-    },
     resetChecked() {
       this.$refs.tree.setCheckedKeys([]);
+    },
+    addNewNodes() {
+      this.dialogFormVisible = true
+      let buildingList = []
+      for (let r of this.allRoomData) {
+        let building = []
+        if (r.pid == null) {
+          building['label'] = building['value'] = r.name
+          buildingList.push(building)
+        }
+      }
+      this.buildingOption = buildingList
+      // this.buildingChange(this.checkedBuilding)
+      // this.addNewForm.checkedRoom = ''
+    },
+    buildingChange(checked) {
+      this.addNewForm.checkedRoom = ''
+      let id = 0;
+      let roomList = []
+      for (let r of this.allRoomData) {
+        if (checked === r.name) {
+          id = r.id
+        }
+      }
+      for (let r of this.allRoomData) {
+        if (r.pid === id) {
+          let room = {}
+          room['label'] = room['value'] = r.name
+          roomList.push(room)
+        }
+      }
+      this.roomOption = roomList
+    },
+    submitAddNewForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          console.log('成功');
+          addNewRoom(this.addNewForm).then(response => {
+            console.log(response);
+          })
+        } else {
+          console.log('失败');
+        }
+      })
     }
   }
 }
