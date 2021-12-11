@@ -6,3 +6,11 @@ export function fetchAllLocation() {
     method: 'get'
   })
 }
+
+export function fetchLocationByRoom(room) {
+  return request({
+    url: '/location/getByRoom',
+    method: 'get',
+    params: { room }
+  })
+}
