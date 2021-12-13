@@ -45,7 +45,8 @@
           </el-select>
           <el-input style="width: 200px"
                     clearable
-                    placeholder="请输入对添加楼的说明"
+                    placeholder="楼位置的描述"
+                    :disabled="buildingDis"
                     v-model="addNewForm.buildingDesc">
           </el-input>
         </el-form-item>
@@ -66,7 +67,9 @@
             </el-option>
           </el-select>
           <el-input style="width: 200px"
-                    placeholder="请输入对房间的说明"
+                    clearable
+                    placeholder="房间的描述"
+                    :disabled="roomDis"
                     v-model="addNewForm.roomDesc">
           </el-input>
         </el-form-item>
@@ -78,10 +81,13 @@
                     placeholder="请输入具体位置"
                     clearable
                     autocomplete="off"
-                    style="width:250px">
+                    style="width:250px"
+                    @blur="locationChange">
           </el-input>
           <el-input style="width: 200px"
-                    placeholder="请输入对位置的说明"
+                    clearable
+                    placeholder="具体位置描述"
+                    :disabled="locationDis"
                     v-model="addNewForm.locationDesc">
           </el-input>
         </el-form-item>
@@ -126,11 +132,12 @@ export default {
       // 表单楼号选项
       buildingOption: [],
       // 表单房间号选项
-      roomOption: [
-        { 'label': 'A1-101', 'value': 'A1-101' }
-      ],
+      roomOption: [],
       allRoomData: [],
-      allLocationData: []
+      allLocationData: [],
+      buildingDis: false,
+      roomDis: false,
+      locationDis: false
     }
   },
   watch: {
@@ -202,7 +209,7 @@ export default {
       return data.label.indexOf(value) !== -1;
     },
     handleCheckChange(data, checked, indeterminate) {
-      console.log(data, checked, indeterminate);
+      // console.log(data, checked, indeterminate);
     },
     handleNodeClick(data) {
       console.log(data);
@@ -229,7 +236,7 @@ export default {
       // this.addNewForm.checkedRoom = ''
     },
     buildingChange(checked) {
-      this.addNewForm.checkedRoom = ''
+      // this.addNewForm.checkedRoom = ''
       let id = 0;
       let roomList = []
       for (let r of this.allRoomData) {
@@ -244,19 +251,34 @@ export default {
           roomList.push(room)
         }
       }
+      this.addNewForm.checkedRoom = roomList[0].value
       this.roomOption = roomList
     },
     submitAddNewForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          console.log('成功');
           addNewRoom(this.addNewForm).then(response => {
             console.log(response);
+            if (response.data === 'exist') {
+              this.$message({
+                message: '已存在这个位置',
+                type: 'warning'
+              });
+            } else if (response.data === 'success') {
+              this.$notify({
+                title: '成功',
+                message: '成功添加新的位置',
+                type: 'success',
+                duration: 2000
+              })
+            }
           })
         } else {
           console.log('失败');
         }
       })
+    },
+    locationChange() {
     }
   }
 }
