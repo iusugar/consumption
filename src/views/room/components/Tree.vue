@@ -8,20 +8,19 @@
              v-loading="treeLoading"
              ref="tree"
              node-key="id"
+             :expand-on-click-node="false"
              :props="defaultProps"
-             show-checkbox
              :filter-node-method="filterNode"
-             @node-click="handleNodeClick"
-             @check-change="handleCheckChange">
+             @node-click="handleNodeClick">
     </el-tree>
     <div class="button-group">
-      <el-button @click="getCheckedNodes">操作选择项</el-button>
+      <!-- <el-button @click="getCheckedNodes">操作选择项</el-button> -->
       <el-button @click="addNewNodes">添加新位置</el-button>
-      <el-button @click="resetChecked">清空选择</el-button>
+      <!-- <el-button @click="resetChecked">清空选择</el-button> -->
     </div>
     <!-- 添加新位置表单 -->
     <el-dialog title="添加新的位置"
-               class="add-dialog"
+               custom-class="add-dialog"
                :visible.sync="dialogFormVisible">
       <el-form :model="addNewForm"
                ref="addNewForm"
@@ -43,12 +42,12 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <el-input style="width: 200px"
+          <!-- <el-input style="width: 200px"
                     clearable
                     placeholder="楼位置的描述"
                     :disabled="buildingDis"
                     v-model="addNewForm.buildingDesc">
-          </el-input>
+          </el-input> -->
         </el-form-item>
         <el-form-item label="门牌号"
                       label-width="80px"
@@ -66,12 +65,12 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <el-input style="width: 200px"
+          <!-- <el-input style="width: 200px"
                     clearable
                     placeholder="房间的描述"
                     :disabled="roomDis"
                     v-model="addNewForm.roomDesc">
-          </el-input>
+          </el-input> -->
         </el-form-item>
         <el-form-item label="具体位置"
                       label-width="80px"
@@ -84,12 +83,12 @@
                     style="width:250px"
                     @blur="locationChange">
           </el-input>
-          <el-input style="width: 200px"
+          <!-- <el-input style="width: 200px"
                     clearable
                     placeholder="具体位置描述"
                     :disabled="locationDis"
                     v-model="addNewForm.locationDesc">
-          </el-input>
+          </el-input> -->
         </el-form-item>
       </el-form>
       <div slot="footer"
@@ -99,12 +98,41 @@
                    @click="submitAddNewForm('addNewForm')">确 定</el-button>
       </div>
     </el-dialog>
+    <el-dialog title="具体信息"
+               custom-class="info-dialog"
+               :visible.sync="dialogInfoVisible">
+      <el-form :model="infoForm"
+               ref="infoForm"
+               label-position="left">
+        <el-form-item label="位置"
+                      label-width="80px"
+                      prop="infoRoom"
+                      :rules="{required: true, message: '不能为空白', trigger: 'blur'}">
+          <el-input v-model="infoForm.infoRoom"
+                    @change="checkInfoRoomIsExist"
+                    autocomplete="off">
+          </el-input>
+        </el-form-item>
+        <el-form-item label="位置描述"
+                      label-width="80px"
+                      prop="infoRoomDesc">
+          <el-input v-model="infoForm.infoRoomDesc"
+                    autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer"
+           class="dialog-footer">
+        <el-button type="primary"
+                   @click="updateRoomOrLocation('infoForm')">修 改</el-button>
+        <el-button @click="deleteRoomOrLocation">删 除</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { fetchAllRoom, addNewRoom } from '@/api/room.js'
-import { fetchAllLocation } from '@/api/location.js'
+import { fetchAllRoom, addNewRoom, fetchRoomInfo, updateRoomInfo, deleteRoom } from '@/api/room.js'
+import { fetchAllLocation, fetchLocationInfo, updateLocationInfo, deleteLocation } from '@/api/location.js'
 
 export default {
   data() {
@@ -112,6 +140,7 @@ export default {
       treeLoading: true,
       // 树数据
       roomData: [],
+      nodeData: {},
       defaultProps: {
         children: 'children',
         label: 'label'
@@ -137,7 +166,14 @@ export default {
       allLocationData: [],
       buildingDis: false,
       roomDis: false,
-      locationDis: false
+      locationDis: false,
+      // 房间信息表单
+      dialogInfoVisible: false,
+      infoForm: {
+        id: 0,
+        infoRoom: '',
+        infoRoomDesc: ''
+      }
     }
   },
   watch: {
@@ -175,29 +211,30 @@ export default {
       }
       buildingNumList = buildingNumList.sort((a, b) => { return a.number.localeCompare(b.number) })
       roomNumList = roomNumList.sort((a, b) => { return a.number.localeCompare(b.number) })
+      console.log(buildingNumList);
       for (let b of buildingNumList) {
         let building = {}
         let bChildren = []
         building['id'] = b.id
         building['label'] = b.number
         for (let r of roomNumList) {
+          let rChildren = []
+          let room = {}
           if (b.id === r.pId) {
-            let room = {}
-            let rChildren = []
             room['id'] = r.id
             room['label'] = r.number
             bChildren.push(room)
             // building['children'] = bChildren
-            for (let loc of this.allLocationData) {
-              if (loc.roomId === r.id) {
-                let location = {}
-                location['id'] = loc.id
-                location['label'] = loc.position
-                rChildren.push(location)
-                room['children'] = rChildren
-                building['children'] = bChildren
-              }
+          }
+          for (let loc of this.allLocationData) {
+            if (loc.roomId === r.id) {
+              let location = {}
+              location['id'] = loc.id
+              location['label'] = loc.position
+              rChildren.push(location)
             }
+            room['children'] = rChildren
+            building['children'] = bChildren
           }
         }
         setData.push(building)
@@ -208,19 +245,31 @@ export default {
       if (!value) return true;
       return data.label.indexOf(value) !== -1;
     },
-    handleCheckChange(data, checked, indeterminate) {
-      // console.log(data, checked, indeterminate);
-    },
     handleNodeClick(data) {
       console.log(data);
+      this.nodeData = data
+      this.dialogInfoVisible = true
+      if (data.children != null) {
+        fetchRoomInfo(data.label, data.id).then(response => {
+          this.infoForm.id = data.id
+          this.infoForm.infoRoom = response.data.name
+          this.infoForm.infoRoomDesc = response.data.description
+          if (response.data.description === '') {
+            this.infoForm.infoRoomDesc = '无'
+          }
+        })
+      } else {
+        fetchLocationInfo(data.label, data.id).then(response => {
+          this.infoForm.id = data.id
+          this.infoForm.infoRoom = response.data.position
+          this.infoForm.infoRoomDesc = response.data.description
+          if (response.data.description === '') {
+            this.infoForm.infoRoomDesc = '无'
+          }
+        })
+      }
     },
     // 对树的操作
-    getCheckedNodes() {
-      console.log(this.$refs.tree.getCheckedNodes());
-    },
-    resetChecked() {
-      this.$refs.tree.setCheckedKeys([]);
-    },
     addNewNodes() {
       this.dialogFormVisible = true
       let buildingList = []
@@ -235,8 +284,9 @@ export default {
       // this.buildingChange(this.checkedBuilding)
       // this.addNewForm.checkedRoom = ''
     },
+    // 楼号变更时触发
     buildingChange(checked) {
-      // this.addNewForm.checkedRoom = ''
+      this.addNewForm.checkedRoom = ''
       let id = 0;
       let roomList = []
       for (let r of this.allRoomData) {
@@ -251,14 +301,16 @@ export default {
           roomList.push(room)
         }
       }
-      this.addNewForm.checkedRoom = roomList[0].value
+      if (checked !== '' && roomList.length > 0) {
+        this.addNewForm.checkedRoom = roomList[0].value
+      }
       this.roomOption = roomList
     },
+    // 提交添加新点位的表单
     submitAddNewForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           addNewRoom(this.addNewForm).then(response => {
-            console.log(response);
             if (response.data === 'exist') {
               this.$message({
                 message: '已存在这个位置',
@@ -271,6 +323,9 @@ export default {
                 type: 'success',
                 duration: 2000
               })
+              this.dialogFormVisible = false
+              this.getAllRoom()
+              // this.clearForm()
             }
           })
         } else {
@@ -279,6 +334,90 @@ export default {
       })
     },
     locationChange() {
+    },
+    checkInfoRoomIsExist(data) {
+    },
+    updateRoomOrLocation(formName) {
+      if (this.nodeData.children != null) {
+        this.$refs[formName].validate(valid => {
+          if (valid) {
+            updateRoomInfo(this.infoForm).then(response => {
+              if (response.data === 'exist') {
+                this.$message({
+                  message: '相同信息 未做更新',
+                  type: 'warning'
+                })
+              } else if (response.data === 'success') {
+                this.$message({
+                  message: '更新成功',
+                  type: 'success'
+                })
+                this.dialogInfoVisible = false
+              }
+            })
+          }
+        })
+      } else {
+        this.$refs[formName].validate(valid => {
+          if (valid) {
+            let location = { 'id': this.infoForm.id, 'position': this.infoForm.infoRoom, 'description': this.infoForm.infoRoomDesc }
+            updateLocationInfo(location).then(response => {
+              if (response.data === 'exist') {
+                this.$message({
+                  message: '相同信息 未做更新',
+                  type: 'warning'
+                })
+              } else if (response.data === 'success') {
+                this.$message({
+                  message: '更新成功',
+                  type: 'success'
+                })
+                this.dialogInfoVisible = false
+              }
+            })
+          }
+        })
+      }
+    },
+    deleteRoomOrLocation() {
+      if (this.nodeData.children != null) {
+        deleteRoom(this.nodeData.id).then(response => {
+          if (response.data === 'success') {
+            this.$message({
+              message: '删除成功',
+              type: 'success'
+            })
+            this.dialogInfoVisible = false
+            this.getAllRoom()
+          } else {
+            this.$message({
+              message: '出现错误',
+              type: 'error'
+            })
+            this.getAllRoom()
+          }
+        })
+      } else {
+        deleteLocation(this.nodeData.id).then(response => {
+          if (response.data === 'success') {
+            this.$message({
+              message: '删除成功',
+              type: 'success'
+            })
+            this.dialogInfoVisible = false
+            this.getAllRoom()
+          } else {
+            this.$message({
+              message: '出现错误',
+              type: 'error'
+            })
+            this.getAllRoom()
+          }
+        })
+      }
+    },
+    clearForm() {
+      this.addNewForm = {}
     }
   }
 }
@@ -301,10 +440,16 @@ export default {
     padding: 30px 20px;
   }
   /deep/ .el-dialog {
-    min-width: 400px;
+    min-width: 350px;
     .el-dialog__footer {
       text-align: center;
     }
+  }
+  /deep/ .add-dialog {
+    width: 500px;
+  }
+  /deep/ .info-dialog {
+    width: 400px;
   }
 }
 </style>
