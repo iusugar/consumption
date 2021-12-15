@@ -45,7 +45,7 @@
           <el-container>
             <el-header>
               <div class="tag">
-                <el-tag type="warning"><i class="el-icon-s-data"></i>一周用电最多</el-tag>
+                <el-tag type="warning"><i class="el-icon-s-data"></i>近七天功耗最多</el-tag>
               </div>
             </el-header>
             <el-main>
@@ -63,7 +63,7 @@
           <el-container>
             <el-header>
               <div class="tag">
-                <el-tag type="danger"><i class="el-icon-s-data"></i>一周用电统计</el-tag>
+                <el-tag type="danger"><i class="el-icon-s-data"></i>近七天用电统计</el-tag>
               </div>
             </el-header>
             <el-main>

@@ -1,10 +1,11 @@
 <!-- 一周用电最多的插座统计 -->
 <template>
   <div :class="className"
-       :style="{wdith:width,height:height}"></div>
+       :style="{width:width,height:height}"></div>
 </template>
 
 <script>
+import { fetchConsumedMost } from '@/api/electricity.js'
 import * as echarts from 'echarts'
 import resize from '../mixins/resize'
 
@@ -26,13 +27,16 @@ export default {
   },
   data() {
     return {
-      chart: null
+      chart: null,
+      deviceData: ['', '', '', '', '', ''],
+      electricityData: [0, 0, 0, 0, 0, 0]
     }
   },
   mounted() {
     this.$nextTick(() => {
       this.initChart()
     })
+    this.getConsumedMost()
   },
   beforeDestroy() {
     if (!this.chart) {
@@ -42,6 +46,18 @@ export default {
     this.chart = null
   },
   methods: {
+    getConsumedMost() {
+      fetchConsumedMost().then(response => {
+        this.deviceData = []
+        this.electricityData = []
+        var electricityData = response.data
+        for (let data of electricityData) {
+          this.deviceData.push(data.deviceId)
+          this.electricityData.push(data.consumption);
+        }
+        this.initChart()
+      })
+    },
     initChart() {
       this.chart = echarts.init(this.$el)
       this.chart.setOption({
@@ -76,7 +92,8 @@ export default {
         },
         xAxis: {
           type: 'category',
-          data: ['插座1', '插座2', '插座3', '插座4', '插座5', '插座6'],
+          // data: ['插座1', '插座2', '插座3', '插座4', '插座5', '插座6'],
+          data: this.deviceData,
           // boundaryGap: false,
           axisLine: {
             show: false
@@ -105,37 +122,37 @@ export default {
           {
             data: [
               {
-                value: 521,
+                value: this.electricityData[0],
                 itemStyle: {
                   color: '#5470c6'
                 }
               },
               {
-                value: 404,
+                value: this.electricityData[1],
                 itemStyle: {
                   color: '#5470c6'
                 }
               },
               {
-                value: 557,
+                value: this.electricityData[2],
                 itemStyle: {
                   color: '#5470c6'
                 }
               },
               {
-                value: 698,
+                value: this.electricityData[3],
                 itemStyle: {
                   color: '#5470c6'
                 }
               },
               {
-                value: 670,
+                value: this.electricityData[4],
                 itemStyle: {
                   color: '#5470c6'
                 }
               },
               {
-                value: 490,
+                value: this.electricityData[5],
                 itemStyle: {
                   color: '#5470c6'
                 }

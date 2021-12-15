@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import { fetchEachDayConsumption } from '@/api/electricity.js'
 import * as echarts from 'echarts'
 import resize from '../mixins/resize'
 
@@ -26,13 +27,16 @@ export default {
   },
   data() {
     return {
-      chart: null
+      chart: null,
+      dateData: [],
+      electricityData: []
     }
   },
   mounted() {
     this.$nextTick(() => {
       this.initChart()
     })
+    this.getEachDayConsumption()
   },
   beforeDestroy() {
     if (!this.chart) {
@@ -42,6 +46,18 @@ export default {
     this.chart = null
   },
   methods: {
+    getEachDayConsumption() {
+      fetchEachDayConsumption().then(response => {
+        console.log(response.data);
+        var dataList = response.data
+        for (let data of dataList) {
+          let date = new Date(Date.parse(data.createTime)).toLocaleString('chinese', { hour12: false }).replace(/\//g, '-')
+          this.dateData.push(date.substring(0, date.indexOf(' ')))
+          this.electricityData.push(data.consumption)
+        }
+        this.initChart()
+      })
+    },
     initChart() {
       this.chart = echarts.init(this.$el)
       this.chart.setOption({
@@ -90,15 +106,7 @@ export default {
         xAxis: [
           {
             type: 'category',
-            data: [
-              '周一',
-              '周二',
-              '周三',
-              '周四',
-              '周五',
-              '周六',
-              '周日'
-            ],
+            data: this.dateData,
             axisLine: {
               show: false
             },
@@ -134,7 +142,7 @@ export default {
             barGap: '5%',
             barCategoryGap: '5%',
             showBackground: true,
-            data: [26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8],
+            data: this.electricityData,
             // markPoint: {
             //   symbol: 'pin',
             //   symbolSize: 40,
