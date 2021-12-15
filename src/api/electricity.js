@@ -50,3 +50,17 @@ export function fetchDayTotalPower() {
     method: 'get'
   })
 }
+// 获取近七天用电最多的六个设备
+export function fetchConsumedMost() {
+  return request({
+    url: '/electricityData/getConsumedMost',
+    method: 'get'
+  })
+}
+// 获取近七天每天的耗电量
+export function fetchEachDayConsumption() {
+  return request({
+    url: '/electricityData/getEachDayConsumption',
+    method: 'get'
+  })
+}
