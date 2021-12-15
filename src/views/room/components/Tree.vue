@@ -2,6 +2,8 @@
 <template>
   <div class="room-tree-container">
     <el-input placeholder="输入关键字进行过滤"
+              :clearable="true"
+              style="width:200px"
               v-model="filterText">
     </el-input>
     <el-tree :data="roomData"
@@ -124,7 +126,20 @@
            class="dialog-footer">
         <el-button type="primary"
                    @click="updateRoomOrLocation('infoForm')">修 改</el-button>
-        <el-button @click="deleteRoomOrLocation">删 除</el-button>
+        <el-popover placement="top"
+                    width="150"
+                    v-model="popoverVisible">
+          <p>可能导致下级元素都被删除 确认删除吗？</p>
+          <div style="text-align: right; margin: 0">
+            <el-button size="mini"
+                       type="text"
+                       @click="popoverVisible = false">取消</el-button>
+            <el-button type="primary"
+                       size="mini"
+                       @click="deleteRoomOrLocation">确定</el-button>
+          </div>
+          <el-button slot="reference">删 除</el-button>
+        </el-popover>
       </div>
     </el-dialog>
   </div>
@@ -173,7 +188,9 @@ export default {
         id: 0,
         infoRoom: '',
         infoRoomDesc: ''
-      }
+      },
+      // 确认删除弹出框
+      popoverVisible: false
     }
   },
   watch: {
@@ -396,6 +413,12 @@ export default {
             })
             this.getAllRoom()
           }
+        }).catch(err => {
+          console.log(err);
+          this.$message({
+            message: '出现错误 该位置下可能有设备存在 请先删除设备',
+            type: 'error'
+          })
         })
       } else {
         deleteLocation(this.nodeData.id).then(response => {
@@ -415,6 +438,7 @@ export default {
           }
         })
       }
+      this.popoverVisible = false
     },
     clearForm() {
       this.addNewForm = {}
