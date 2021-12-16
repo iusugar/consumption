@@ -54,7 +54,7 @@
         <el-form-item label="门牌号"
                       label-width="80px"
                       prop="checkedRoom"
-                      :rules="{required: true, message: '请选择或输入门牌号', trigger: 'change'}">
+                      :rules="{required: true, message: '请选择或输入门牌号', trigger: 'blur'}">
           <el-select v-model="addNewForm.checkedRoom"
                      filterable
                      allow-create
@@ -77,7 +77,7 @@
         <el-form-item label="具体位置"
                       label-width="80px"
                       prop="location"
-                      :rules="{required: true, message: '请输入房间中的具体位置', trigger: 'change'}">
+                      :rules="{required: true, message: '请输入房间中的具体位置', trigger: 'blur'}">
           <el-input v-model="addNewForm.location"
                     placeholder="请输入具体位置"
                     clearable
@@ -342,7 +342,7 @@ export default {
               })
               this.dialogFormVisible = false
               this.getAllRoom()
-              // this.clearForm()
+              this.clearForm()
             }
           })
         } else {

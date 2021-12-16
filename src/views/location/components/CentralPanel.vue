@@ -14,7 +14,15 @@
               :sm="24"
               :md="24"
               :lg="12">
-        <div class="Usage-history"></div>
+        <div class="Usage-history">
+          <el-timeline>
+            <el-timeline-item v-for="(activity, index) in activities"
+                              :key="index"
+                              :timestamp="activity.timestamp">
+              {{activity.content}}
+            </el-timeline-item>
+          </el-timeline>
+        </div>
       </el-col>
     </el-row>
     <el-row>
@@ -39,7 +47,18 @@ export default {
       deviceData: [],
       locationList: [],
       location: '稍等',
-      devId: ''
+      devId: '',
+      // 设备上下线时间线
+      activities: [{
+        content: '活动按期开始',
+        timestamp: '2018-04-15'
+      }, {
+        content: '通过审核',
+        timestamp: '2018-04-13'
+      }, {
+        content: '创建成功',
+        timestamp: '2018-04-11'
+      }]
     }
   },
   activated() {
@@ -48,6 +67,7 @@ export default {
   methods: {
     getPosition() {
       bus.$on('deviceDataList', e => {
+        console.log(e);
         this.deviceData = e
         this.locationList.splice(0, this.locationList.length)
         this.location = ''
@@ -56,11 +76,12 @@ export default {
         }
       })
       bus.$on('checkedDevice', e => {
-        // console.log(e);
         if (this.locationList != null && this.locationList.length > 0) {
           this.location = this.locationList[e].roomNum + '-' + this.locationList[e].location;
         }
       })
+    },
+    getActivityData() {
     }
   }
 }
@@ -80,6 +101,7 @@ export default {
       margin-bottom: 20px;
       background-color: #ffffffaa;
       box-shadow: 0 2px 5px #00000015;
+      padding: 20px;
     }
     .Usage-history {
       width: 100%;
@@ -87,6 +109,10 @@ export default {
       margin-bottom: 20px;
       background-color: #ffffffaa;
       box-shadow: 0 2px 5px #00000015;
+      padding: 20px 30px;
+      .el-timeline {
+        text-align: left;
+      }
     }
   }
   .el-row:nth-child(2) {

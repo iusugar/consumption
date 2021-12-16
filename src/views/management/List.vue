@@ -196,7 +196,8 @@
             </el-col>
             <el-col :span="6">
               <el-form-item prop="roomNum">
-                <el-select v-model="dialogForm.roomNum">
+                <el-select v-model="dialogForm.roomNum"
+                           @change="roomChange">
                   <el-option v-for="option in roomOption"
                              :key="option.value"
                              :label="option.label"
@@ -231,6 +232,7 @@
 <script>
 import { fetchAllDevice, fetchDeviceList, updateDevice, deleteDevice } from '@/api/device.js'
 import { fetchAllRoom } from '@/api/room.js'
+import { fetchLocationByRoom } from '@/api/location.js'
 import buildingArray from '@/assets/json/building.json'
 import roomArray from '@/assets/json/room.json'
 
@@ -282,13 +284,13 @@ export default {
       },
       rules: {
         buildNum: [
-          { required: true, message: '不能为空', trigger: 'change' }
+          { required: true, message: '不能为空白', trigger: 'change' }
         ],
         roomNum: [
-          { required: true, message: '不能为空', trigger: 'blur' }
+          { required: true, message: '不能为空白', trigger: 'blur' }
         ],
         location: [
-          { required: true, message: '不能为空', trigger: 'change' }
+          { required: true, message: '不能为空白', trigger: 'blur' }
         ]
       },
       // dialog下拉框选项
@@ -384,6 +386,7 @@ export default {
       fetchAllRoom()
         .then(response => {
           this.roomData = response.data
+          this.roomData.sort((a, b) => { return a.name.localeCompare(b.name) })
           let buildingArray = []
           for (let o of this.roomData) {
             let building = []
@@ -412,6 +415,18 @@ export default {
       }
       this.roomOption = roomArray
       this.dialogForm.roomNum = ''
+      this.dialogForm.location = ''
+    },
+    roomChange(checked) {
+      this.dialogForm.location = ''
+      fetchLocationByRoom(this.dialogForm.buildNum + '-' + checked).then(response => {
+        let locationList = []
+        for (let loc of response.data) {
+          locationList.push({ 'label': loc.position, 'value': loc.position })
+        }
+        locationList = locationList.sort((a, b) => { return a.value.localeCompare(b.value) })
+        this.locationOption = locationList
+      })
     },
     handleEdit(index, row) {
       this.buildingChange(row.bNum)
@@ -532,7 +547,8 @@ export default {
       .el-dialog__headerbtn {
         top: 10px !important;
       }
-      span,i {
+      span,
+      i {
         font-size: 14px;
         color: #fff;
       }

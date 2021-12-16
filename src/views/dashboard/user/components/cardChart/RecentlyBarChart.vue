@@ -48,7 +48,6 @@ export default {
   methods: {
     getEachDayConsumption() {
       fetchEachDayConsumption().then(response => {
-        console.log(response.data);
         var dataList = response.data
         for (let data of dataList) {
           let date = new Date(Date.parse(data.createTime)).toLocaleString('chinese', { hour12: false }).replace(/\//g, '-')

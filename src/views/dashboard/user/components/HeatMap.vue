@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { fetchWeekOnlineNumber } from '@/api/historical.js'
+import { fetchWeekOnlineCount } from '@/api/historical.js'
 import * as echarts from 'echarts'
 import resize from './mixins/resize'
 
@@ -33,11 +33,19 @@ export default {
       ]
     }
   },
-  activated() {
+  mounted() {
     this.$nextTick(() => {
       this.initChart()
+      // 点击事件
+      this.chart.on('click', (e) => {
+        // let hour = e.data[0]
+        // let day = e.data[1]
+        // let count = e.data[2]
+      })
     })
-    this.getOnlineNumber()
+  },
+  activated() {
+    this.getOnlineCount()
   },
   beforeDestroy() {
     if (!this.chart) {
@@ -47,12 +55,10 @@ export default {
     this.chart = null
   },
   methods: {
-    getOnlineNumber() {
-      fetchWeekOnlineNumber().then(response => {
+    getOnlineCount() {
+      fetchWeekOnlineCount().then(response => {
         this.onlineDeviceData = response.data
         this.initChart()
-        // 点击事件
-        this.chart.on('click', (el) => { console.log(el); })
       })
     },
     initChart() {
@@ -76,7 +82,7 @@ export default {
           position: 'top',
           trigger: 'item',
           formatter(e) {
-            return `${yAxisVal} ${xAxisVal}时 <br/> ${(e.data && e.data[2]) || '无'} `;
+            return `${yAxisVal} ${xAxisVal}时 <br/> ${(e.data && e.data[2]) || 0} 个 `;
           }
         },
         grid: {

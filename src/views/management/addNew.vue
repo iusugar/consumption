@@ -289,6 +289,8 @@ export default {
       for (let o of this.roomData) {
         if (o.pid === id) {
           let room = {}
+          room['id'] = o.id
+          room['pid'] = o.pid
           room['label'] = room['value'] = o.name
           roomList.push(room)
         }
@@ -304,13 +306,14 @@ export default {
           for (let o of this.roomData) {
             let building = []
             if (o.pid == null) {
+              building['id'] = o.id
               building['label'] = building['value'] = o.name
               buildingList.push(building)
             }
           }
           this.buildingOption = buildingList
           // this.buildingChange(this.checkedBuilding)
-          this.ruleForm.roomNum = ''
+          // this.ruleForm.roomNum = ''
         })
     }
   }
