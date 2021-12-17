@@ -1,5 +1,6 @@
 import request from '@/utils/request.js'
 
+// 添加设备
 export function addDevice(device) {
   return request({
     url: '/device/add',
@@ -7,7 +8,7 @@ export function addDevice(device) {
     data: device
   })
 }
-
+// 通过设备23位ID检查设备是否存在
 export function checkIsExist(deviceId) {
   return request({
     url: '/device/isExist',
@@ -46,7 +47,7 @@ export function updateDevice(device) {
     data: device
   })
 }
-
+// 删除设备
 export function deleteDevice(device) {
   return request({
     url: '/device/delete',

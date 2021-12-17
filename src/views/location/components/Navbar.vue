@@ -77,9 +77,9 @@ export default {
       this.$nextTick(() => {
         this.setState()
       });
-      // 中间定位板块接收
+      // 中间定位板块接收 发送下标 表示第几个
       bus.$emit('checkedDevice', tab.name)
-      // 图表接收
+      // 图表接收 设备id
       bus.$emit('checkedDeviceId', this.deviceTabs[tab.index].id)
     }
   }

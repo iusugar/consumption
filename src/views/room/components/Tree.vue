@@ -1,7 +1,7 @@
 <!-- 树形控件展示空间位置 -->
 <template>
   <div class="room-tree-container">
-    <el-input placeholder="输入关键字进行过滤"
+    <el-input placeholder="输入关键字进行过滤查找"
               :clearable="true"
               style="width:200px"
               v-model="filterText">
@@ -30,7 +30,7 @@
         <el-form-item label="楼号"
                       label-width="80px"
                       prop="checkedBuilding"
-                      :rules="{required: true, message: '请选择或输入楼号', trigger: 'change'}">
+                      :rules="{required: true, message: '请选择或输入楼号', trigger: 'blur'}">
           <el-select v-model="addNewForm.checkedBuilding"
                      filterable
                      allow-create
@@ -179,6 +179,7 @@ export default {
       roomOption: [],
       allRoomData: [],
       allLocationData: [],
+      // 是否可用 未用
       buildingDis: false,
       roomDis: false,
       locationDis: false,
@@ -228,7 +229,6 @@ export default {
       }
       buildingNumList = buildingNumList.sort((a, b) => { return a.number.localeCompare(b.number) })
       roomNumList = roomNumList.sort((a, b) => { return a.number.localeCompare(b.number) })
-      console.log(buildingNumList);
       for (let b of buildingNumList) {
         let building = {}
         let bChildren = []
@@ -263,7 +263,6 @@ export default {
       return data.label.indexOf(value) !== -1;
     },
     handleNodeClick(data) {
-      console.log(data);
       this.nodeData = data
       this.dialogInfoVisible = true
       if (data.children != null) {
@@ -314,7 +313,7 @@ export default {
       for (let r of this.allRoomData) {
         if (r.pid === id) {
           let room = {}
-          room['label'] = room['value'] = r.name
+          room['label'] = room['value'] = r.name.substring(r.name.indexOf('-') + 1)
           roomList.push(room)
         }
       }

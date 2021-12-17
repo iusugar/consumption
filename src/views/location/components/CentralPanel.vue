@@ -15,13 +15,16 @@
               :md="24"
               :lg="12">
         <div class="Usage-history">
-          <el-timeline>
-            <el-timeline-item v-for="(activity, index) in activities"
-                              :key="index"
-                              :timestamp="activity.timestamp">
-              {{activity.content}}
-            </el-timeline-item>
-          </el-timeline>
+          <el-scrollbar wrap-class="scrollbar" style="height: 100%;width: 100%;">
+            <el-timeline>
+              <el-timeline-item v-for="(activity, index) in activities"
+                                :key="index"
+                                :timestamp="activity.timestamp"
+                                :color="activity.color">
+                {{activity.status}}
+              </el-timeline-item>
+            </el-timeline>
+          </el-scrollbar>
         </div>
       </el-col>
     </el-row>
@@ -37,6 +40,7 @@
 </template>
 
 <script>
+import { fetchHistoricalActivities } from '@/api/historical.js'
 import LineChart from './chart/LineChart.vue'
 import bus from '@/utils/bus.js'
 
@@ -50,24 +54,19 @@ export default {
       devId: '',
       // 设备上下线时间线
       activities: [{
-        content: '活动按期开始',
+        status: '活动按期开始',
         timestamp: '2018-04-15'
-      }, {
-        content: '通过审核',
-        timestamp: '2018-04-13'
-      }, {
-        content: '创建成功',
-        timestamp: '2018-04-11'
       }]
     }
   },
   activated() {
     this.getPosition()
+    this.getActivityData()
   },
   methods: {
     getPosition() {
+      // 接收设备列表
       bus.$on('deviceDataList', e => {
-        console.log(e);
         this.deviceData = e
         this.locationList.splice(0, this.locationList.length)
         this.location = ''
@@ -82,6 +81,15 @@ export default {
       })
     },
     getActivityData() {
+      bus.$on('checkedDeviceId', e => {
+        fetchHistoricalActivities(e).then(response => {
+          var activities = []
+          for (let data of response.data) {
+            activities.push({ 'status': data.status ? '在线' : '离线', 'color': data.status ? '#2baa5d' : '#e55d5d', 'timestamp': new Date(Date.parse(data.createTime)).toLocaleString('chinese', { hour12: false }).replace(/\//g, '-') })
+          }
+          this.activities = activities
+        })
+      })
     }
   }
 }
@@ -96,20 +104,23 @@ export default {
     .plane-model {
       width: 100%;
       height: 300px;
-      padding: 20px;
+      padding: 30px 20px;
       box-sizing: border-box;
       margin-bottom: 20px;
       background-color: #ffffffaa;
       box-shadow: 0 2px 5px #00000015;
-      padding: 20px;
     }
     .Usage-history {
       width: 100%;
       height: 300px;
       margin-bottom: 20px;
+      box-sizing: border-box;
       background-color: #ffffffaa;
       box-shadow: 0 2px 5px #00000015;
       padding: 20px 30px;
+      /deep/ .scrollbar {
+        overflow-x: hidden;
+      }
       .el-timeline {
         text-align: left;
       }

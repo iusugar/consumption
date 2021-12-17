@@ -28,10 +28,10 @@
         <el-submenu index="1">
           <template slot="title">
             <i class="el-icon-s-management"></i>
-            <span slot="title">插座管理</span>
+            <span slot="title">设备管理</span>
           </template>
           <el-menu-item index="/management/add-new">添加智能插座</el-menu-item>
-          <el-menu-item index="/management/list">查看插座列表</el-menu-item>
+          <el-menu-item index="/management/list">查看设备列表</el-menu-item>
         </el-submenu>
         <!-- <el-menu-item index="/management/index">
         <i class="el-icon-s-management"></i>
@@ -39,7 +39,7 @@
       </el-menu-item> -->
         <el-menu-item index="/location/index">
           <i class="el-icon-location"></i>
-          <span slot="title">插座分布</span>
+          <span slot="title">设备分布</span>
         </el-menu-item>
         <el-menu-item index="/room/index">
           <i class="el-icon-office-building"></i>

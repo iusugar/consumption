@@ -29,13 +29,14 @@
 
       <el-select v-model="queryList.buildNum"
                  clearable
+                 @change="buildingChange"
                  placeholder="楼号"
                  class="filter-item"
                  style="width:100px">
-        <el-option v-for="item in buildingNumber"
-                   :key="item"
-                   :label="item"
-                   :value="item">
+        <el-option v-for="item in buildingList"
+                   :key="item.value"
+                   :label="item.label"
+                   :value="item.value">
         </el-option>
       </el-select>
 
@@ -44,10 +45,10 @@
                  placeholder="门牌号"
                  class="filter-item"
                  style="width:100px">
-        <el-option v-for="item in roomNumber"
-                   :key="item"
-                   :label="item"
-                   :value="item">
+        <el-option v-for="item in roomList"
+                   :key="item.value"
+                   :label="item.label"
+                   :value="item.value">
         </el-option>
       </el-select>
 
@@ -233,8 +234,8 @@
 import { fetchAllDevice, fetchDeviceList, updateDevice, deleteDevice } from '@/api/device.js'
 import { fetchAllRoom } from '@/api/room.js'
 import { fetchLocationByRoom } from '@/api/location.js'
-import buildingArray from '@/assets/json/building.json'
-import roomArray from '@/assets/json/room.json'
+// import buildingArray from '@/assets/json/building.json'
+// import roomArray from '@/assets/json/room.json'
 
 export default {
   data() {
@@ -253,9 +254,9 @@ export default {
       value: [],
       list: [],
       alternateDeviceNum: [],
-      // 静态房间数据json
-      buildingNumber: buildingArray,
-      roomNumber: roomArray,
+      // 房间数据
+      buildingList: [],
+      roomList: [],
       // 表格数据
       tableData: [
         // { deviceId: 'A1203', addDate: '2021-10-01 10:10', bNum: 'A1', rNum: '101', location: '6号桌', power: '21%' }
@@ -396,6 +397,7 @@ export default {
             }
           }
           this.buildingOption = buildingArray
+          this.buildingList = buildingArray
         })
     },
     buildingChange(checked) {
@@ -414,12 +416,14 @@ export default {
         }
       }
       this.roomOption = roomArray
+      this.roomList = roomArray
       this.dialogForm.roomNum = ''
       this.dialogForm.location = ''
     },
     roomChange(checked) {
       this.dialogForm.location = ''
       fetchLocationByRoom(this.dialogForm.buildNum + '-' + checked).then(response => {
+        console.log(response.data);
         let locationList = []
         for (let loc of response.data) {
           locationList.push({ 'label': loc.position, 'value': loc.position })
@@ -429,11 +433,13 @@ export default {
       })
     },
     handleEdit(index, row) {
+      console.log(row);
       this.buildingChange(row.bNum)
       this.dialogForm.deviceId = row.deviceId
       this.dialogForm.addDate = row.addDate
       this.dialogForm.buildNum = row.bNum
       this.dialogForm.roomNum = row.rNum
+      this.roomChange(row.rNum)
       this.dialogForm.location = row.location
       this.dialogFormVisible = true
     },

@@ -10,9 +10,16 @@ export function fetchWeekOnlineCount() {
 // 通过设备id获取上下线记录
 export function fetchHistoricalActivities(id) {
   return request({
-    url: '',
+    url: '/historicalStatus/deviceActivitiesData',
     method: 'get',
     params: { id }
+  })
+}
+// 获取最近设备上下线记录
+export function fetchRecentlyActivities() {
+  return request({
+    url: '/historicalStatus/recentlyActivitiesData',
+    method: 'get'
   })
 }
 
