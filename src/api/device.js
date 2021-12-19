@@ -55,3 +55,11 @@ export function deleteDevice(device) {
     data: device
   })
 }
+// 通过时间点查询在线设备
+export function fetchOnlineDevice(day, hour) {
+  return request({
+    url: '/device/getOnlineDevice',
+    method: 'get',
+    params: { day, hour }
+  })
+}

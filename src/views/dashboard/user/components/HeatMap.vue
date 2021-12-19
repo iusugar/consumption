@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import { fetchOnlineDevice } from '@/api/device.js'
 import { fetchWeekOnlineCount } from '@/api/historical.js'
 import * as echarts from 'echarts'
 import resize from './mixins/resize'
@@ -38,9 +39,12 @@ export default {
       this.initChart()
       // 点击事件
       this.chart.on('click', (e) => {
-        // let hour = e.data[0]
-        // let day = e.data[1]
+        let hour = e.data[0]
+        let day = e.data[1]
         // let count = e.data[2]
+        fetchOnlineDevice(day, hour).then(response => {
+          console.log(response);
+        })
       })
     })
   },
