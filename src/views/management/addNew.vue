@@ -123,6 +123,21 @@
             </el-col>
           </el-row>
           <el-row type="flex">
+            <el-col :span="9">
+              <el-form-item label="设备网关"
+                            prop="gateway">
+                <el-select v-model="ruleForm.gateway"
+                           placeholder="请选择网关">
+                  <el-option v-for="item in gatewayOption"
+                             :key="item.id"
+                             :label="item.label"
+                             :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row type="flex">
             <el-form-item label="具备功能"
                           prop="checkedFunctions">
               <el-checkbox :indeterminate="ruleForm.isIndeterminate"
@@ -155,6 +170,7 @@
 </template>
 
 <script>
+import { fetchAllGateway } from '@/api/gateway.js'
 import { addDevice, checkIsExist } from '@/api/device.js'
 import { fetchAllRoom } from '@/api/room.js'
 import { fetchLocationByRoom } from '@/api/location.js'
@@ -171,6 +187,7 @@ export default {
         ratedVoltage: '220',
         ratedCurrent: '',
         ratedPower: '',
+        gateway: '',
         deviceFunctions: ['监测电流', '监测电压', '监测功率', '远程控制', '记录电量', '红外功能'],
         checkAll: false,
         checkedFunctions: ['监测功率', '记录电量'],
@@ -188,12 +205,16 @@ export default {
           { required: true, message: '请选择门牌号', trigger: 'change' }
         ],
         location: [
-          { required: true, message: '请填写具体位置', trigger: 'change' }
+          { required: true, message: '请选择具体位置', trigger: 'change' }
+        ],
+        gateway: [
+          { required: true, message: '请选择网关', trigger: 'change' }
         ]
       },
       buildingOption: [],
       roomOption: [],
-      locationOption: [{ 'label': '2号桌', 'value': '2号桌' }],
+      locationOption: [],
+      gatewayOption: [],
       roomData: [],
       checkedBuilding: '',
       checkedRoom: ''
@@ -204,6 +225,7 @@ export default {
   // },
   activated() {
     this.getAllRoom()
+    this.getAllGateway()
   },
   methods: {
     isExist() {
@@ -315,6 +337,16 @@ export default {
           // this.buildingChange(this.checkedBuilding)
           // this.ruleForm.roomNum = ''
         })
+    },
+    getAllGateway() {
+      fetchAllGateway().then(response => {
+        console.log(response);
+        var gatewayList = []
+        for (let gateway of response.data) {
+          gatewayList.push({ 'label': gateway.name, 'value': gateway.name, 'id': gateway.id })
+        }
+        this.gatewayOption = gatewayList
+      })
     }
   }
 }

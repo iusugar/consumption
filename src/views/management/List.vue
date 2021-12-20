@@ -1,8 +1,8 @@
-<!-- 查看插座列表 -->
+<!-- 查看设备列表 -->
 <template>
   <div class="list-container">
     <div class="filter-container">
-      <el-input placeholder="插座用途"
+      <el-input placeholder="设备用途"
                 prefix-icon="el-icon-search"
                 v-model="queryList.usageDesc"
                 clearable
@@ -15,7 +15,7 @@
                  filterable
                  remote
                  reserve-keyword
-                 placeholder="插座编号"
+                 placeholder="设备编号"
                  :remote-method="remoteMethod"
                  :loading="loading"
                  class="filter-item"
@@ -182,7 +182,7 @@
         <el-row type="flex"
                 justify="space-between">
           <el-form-item label="空间位置"
-                        :rules="{required: true, message: '不能为空', trigger: 'change'}">
+                        :rules="{required: true, message: '不能为空', trigger: 'blur'}">
             <el-col :span="6">
               <el-form-item prop="buildNum">
                 <el-select v-model="dialogForm.buildNum"
@@ -285,7 +285,7 @@ export default {
       },
       rules: {
         buildNum: [
-          { required: true, message: '不能为空白', trigger: 'change' }
+          { required: true, message: '不能为空白', trigger: 'blur' }
         ],
         roomNum: [
           { required: true, message: '不能为空白', trigger: 'blur' }
@@ -308,6 +308,7 @@ export default {
   methods: {
     // 初始化数据 获取全部
     getAllDevice() {
+      this.currentPage = 1
       this.deviceNumList = []
       fetchAllDevice().then(response => {
         this.allDeviceDataList = response.data
@@ -423,7 +424,6 @@ export default {
     roomChange(checked) {
       this.dialogForm.location = ''
       fetchLocationByRoom(this.dialogForm.buildNum + '-' + checked).then(response => {
-        console.log(response.data);
         let locationList = []
         for (let loc of response.data) {
           locationList.push({ 'label': loc.position, 'value': loc.position })
@@ -433,7 +433,9 @@ export default {
       })
     },
     handleEdit(index, row) {
-      console.log(row);
+      if (this.$refs.dialogForm) {
+        this.$refs.dialogForm.resetFields()
+      }
       this.buildingChange(row.bNum)
       this.dialogForm.deviceId = row.deviceId
       this.dialogForm.addDate = row.addDate
@@ -507,7 +509,7 @@ export default {
 .list-container {
   width: 100%;
   min-height: calc(100vh - 50px);
-  background-color: #fff;
+  background-color: #FFF;
   // border-radius: 5px;
   // box-shadow: 0 2px 5px #00000025;
   box-sizing: border-box;
