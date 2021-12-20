@@ -15,7 +15,8 @@
               :md="24"
               :lg="12">
         <div class="Usage-history">
-          <el-scrollbar wrap-class="scrollbar" style="height: 100%;width: 100%;">
+          <el-scrollbar wrap-class="scrollbar"
+                        style="height: 100%;width: 100%;">
             <el-timeline>
               <el-timeline-item v-for="(activity, index) in activities"
                                 :key="index"
@@ -50,13 +51,10 @@ export default {
     return {
       deviceData: [],
       locationList: [],
-      location: '稍等',
+      location: '连接中稍等',
       devId: '',
       // 设备上下线时间线
-      activities: [{
-        status: '活动按期开始',
-        timestamp: '2018-04-15'
-      }]
+      activities: []
     }
   },
   activated() {
@@ -86,6 +84,9 @@ export default {
           var activities = []
           for (let data of response.data) {
             activities.push({ 'status': data.status ? '在线' : '离线', 'color': data.status ? '#2baa5d' : '#e55d5d', 'timestamp': new Date(Date.parse(data.createTime)).toLocaleString('chinese', { hour12: false }).replace(/\//g, '-') })
+          }
+          if (activities.length === 0) {
+            activities.push({ 'status': '无使用记录' })
           }
           this.activities = activities
         })

@@ -63,3 +63,11 @@ export function fetchOnlineDevice(day, hour) {
     params: { day, hour }
   })
 }
+// 通过网关名查询设备
+export function fetchByGateway(gateway) {
+  return request({
+    url: '/device/getByGateway',
+    method: 'get',
+    params: { gateway }
+  })
+}
