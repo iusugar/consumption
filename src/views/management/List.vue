@@ -525,7 +525,7 @@ export default {
     }
   }
   .table-container {
-    min-height: 300px;
+    min-height: 400px;
     position: relative;
     .el-table {
       width: 100%;

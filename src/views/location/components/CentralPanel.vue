@@ -99,7 +99,7 @@ export default {
 <style lang="scss" scoped>
 .central-panel-container {
   .el-row:nth-child(1) {
-    padding: 40px 50px 50px 80px;
+    padding: 40px 50px 30px 80px;
     width: 100%;
     height: 100%;
     .plane-model {

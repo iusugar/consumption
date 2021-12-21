@@ -26,6 +26,15 @@
     </el-tabs>
     <div class="bottom-container">
       <el-button type="primary">添加网关</el-button>
+      <div class="pagination-container">
+        <el-pagination background
+                       layout="prev, pager, next"
+                       :total="this.deviceDataList.length"
+                       :page-size="pageSize"
+                       :current-page.sync="currentPage"
+                       @current-change="handleCurrentChange">
+        </el-pagination>
+      </div>
     </div>
 
   </div>
@@ -39,9 +48,12 @@ export default {
   data() {
     return {
       tableData: [],
-      activePane: 'first',
+      activePane: '',
       gatewayList: [],
-      deviceList: []
+      deviceDataList: [],
+      // 分页
+      pageSize: 10,
+      currentPage: 1
     }
   },
   mounted() {
@@ -67,11 +79,15 @@ export default {
         for (let device of response.data) {
           deviceList.push({ 'deviceId': device.deviceId, 'createTime': new Date(Date.parse(device.createTime)).toLocaleString('chinese', { hour12: false }).replace(/\//g, '-') })
         }
-        this.tableData = deviceList
+        this.deviceDataList = deviceList
+        this.tableData = this.deviceDataList.slice(0, this.pageSize)
       })
     },
     handlePaneClick(e) {
       this.getGatewayDevice(e.name)
+    },
+    handleCurrentChange(current) {
+      this.tableData = this.deviceDataList.slice((current - 1) * this.pageSize, (current - 1) * this.pageSize + this.pageSize)
     }
   }
 }
@@ -82,10 +98,13 @@ export default {
   width: 100%;
   height: 100%;
   .el-table {
-    min-height: 300px;
+    min-height: 400px;
   }
   .bottom-container {
     padding: 30px 20px;
+    .pagination-container {
+      text-align: center;
+    }
   }
 }
 </style>

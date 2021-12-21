@@ -43,7 +43,7 @@ export default {
       loading: false
     }
   },
-  mounted() {
+  activated() {
     this.setState()
   },
   methods: {
