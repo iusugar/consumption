@@ -25,7 +25,7 @@
       </el-tab-pane>
     </el-tabs>
     <div class="bottom-container">
-      <el-button type="primary">添加网关</el-button>
+      <!-- <el-button type="primary" @click="addGateway">添加网关</el-button> -->
       <div class="pagination-container">
         <el-pagination background
                        layout="prev, pager, next"
@@ -36,6 +36,16 @@
         </el-pagination>
       </div>
     </div>
+    <el-dialog title="网关配置"
+               :visible.sync="addGatewayDialogVisible"
+               width="40%">
+      <span slot="footer"
+            class="dialog-footer">
+        <el-button @click="addGatewayDialogVisible = false">取 消</el-button>
+        <el-button type="primary"
+                   @click="addGatewayDialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
 
   </div>
 </template>
@@ -53,7 +63,8 @@ export default {
       deviceDataList: [],
       // 分页
       pageSize: 10,
-      currentPage: 1
+      currentPage: 1,
+      addGatewayDialogVisible: false
     }
   },
   mounted() {
@@ -88,6 +99,9 @@ export default {
     },
     handleCurrentChange(current) {
       this.tableData = this.deviceDataList.slice((current - 1) * this.pageSize, (current - 1) * this.pageSize + this.pageSize)
+    },
+    addGateway() {
+      this.addGatewayDialogVisible = true
     }
   }
 }

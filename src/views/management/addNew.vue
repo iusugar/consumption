@@ -226,6 +226,7 @@ export default {
   activated() {
     this.getAllRoom()
     this.getAllGateway()
+    this.resetForm('ruleForm')
   },
   methods: {
     isExist() {

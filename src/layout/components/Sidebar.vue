@@ -21,17 +21,17 @@
           <i class="el-icon-menu"></i>
           <span slot="title">综合数据</span>
         </el-menu-item>
-        <el-menu-item index="/analysis/index">
+        <!-- <el-menu-item index="/analysis/index">
           <i class="el-icon-data-analysis"></i>
           <span slot="title">Analysis</span>
-        </el-menu-item>
+        </el-menu-item> -->
         <el-submenu index="1">
           <template slot="title">
             <i class="el-icon-s-management"></i>
             <span slot="title">设备管理</span>
           </template>
           <el-menu-item index="/management/add-new">添加智能插座</el-menu-item>
-          <el-menu-item index="/management/list">查看设备列表</el-menu-item>
+          <el-menu-item index="/management/list">查看插座列表</el-menu-item>
         </el-submenu>
         <!-- <el-menu-item index="/management/index">
         <i class="el-icon-s-management"></i>
@@ -49,10 +49,10 @@
           <i class="el-icon-box"></i>
           <span slot="title">网关配置</span>
         </el-menu-item>
-        <el-menu-item index="/user/index">
+        <!-- <el-menu-item index="/user/index">
           <i class="el-icon-user-solid"></i>
           <span slot="title">User</span>
-        </el-menu-item>
+        </el-menu-item> -->
       </el-menu>
     </el-scrollbar>
   </div>
