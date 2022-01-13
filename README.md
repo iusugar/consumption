@@ -1,6 +1,8 @@
-# energy-consumption-analysis-v1
+# energy-consumption-analysis
 
 > A Vue.js project
+
+智能插座能耗分析与管理
 
 ## Build Setup
 
